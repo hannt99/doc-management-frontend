@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import InputField from '~/components/InputField';
-import { PasswordValidator } from '~/utils/formValidation';
+import { passwordValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
 import * as authServices from '~/services/authServices';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
@@ -23,32 +23,24 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const validator = new PasswordValidator();
-        const isPasswordValid = validator.validate(newPassword, setIsNewPasswordErr, setNewPasswordErrMsg);
-        const isConfirmPasswordValid = validator.validate(
+        const isPasswordValid = passwordValidator(newPassword, newPassword, setIsNewPasswordErr, setNewPasswordErrMsg);
+        const isConfirmPasswordValid = passwordValidator(
             confirmPassword,
+            newPassword,
             setIsConfirmPasswordErr,
             setConfirmPasswordErrMsg,
         );
-
-        // const isPasswordValid = passwordValidator(password, password, setIsPasswordErr, setPasswordErrMsg);
-        // const isConfirmPasswordValid = passwordValidator(
-        //     confirmPassword,
-        //     password,
-        //     setIsConfirmPasswordErr,
-        //     setConfirmPasswordErrMsg,
-        // );
         if (!isPasswordValid || !isConfirmPasswordValid) return;
 
         setLoading(true);
 
         const data = {
-            token: localStorage.getItem('resetToken'),
-            password: password,
+            token: localStorage.getItem('resetPasswordToken'),
+            password: newPassword,
         };
         const res = await authServices.resetPassword(data);
         if (res.code === 200) {
-            localStorage.removeItem('resetToken');
+            localStorage.removeItem('resetPasswordToken');
             setLoading(false);
             successNotify(res.message);
         } else {
@@ -71,7 +63,7 @@ const ResetPassword = () => {
                             name="password"
                             value={newPassword}
                             setValue={setNewPassword}
-                            onBlur={() => passwordValidator(password, password, setIsPasswordErr, setPasswordErrMsg)}
+                            onBlur={() => passwordValidator(newPassword, newPassword, setIsNewPasswordErr, setNewPasswordErrMsg)}
                             className={isNewPasswordErr ? 'invalid' : 'default'}
                         />
                         <p className="text-red-600 text-[1.3rem]">{newPasswordErrMsg.newPassword}</p>
@@ -84,7 +76,7 @@ const ResetPassword = () => {
                                 onBlur={() =>
                                     passwordValidator(
                                         confirmPassword,
-                                        password,
+                                        newPassword,
                                         setIsConfirmPasswordErr,
                                         setConfirmPasswordErrMsg,
                                     )
