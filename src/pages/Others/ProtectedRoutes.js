@@ -1,16 +1,18 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-const auth = () => {
-    const token = localStorage.getItem('accessToken') || '';
-    if (!token) {
-        return false;
-    }
-    return true;
+
+const isAuthenticated = () => {
+    const accessToken = localStorage.getItem('accessToken') || '';
+    return Boolean(accessToken);
 };
 
 const ProtectedRoutes = () => {
-    const isAuth = auth();
-    return !isAuth ? <Navigate to="/sign-in"/> :  <Outlet/>;
+    const isAuth = isAuthenticated();
+    if (!isAuth) {
+        const destination = '/sign-in/';
+        return <Navigate to={destination} />;
+    }
+    return <Outlet />;
 };
 
 export default ProtectedRoutes;

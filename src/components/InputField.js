@@ -67,7 +67,7 @@ const InputField = (props) => {
                 <img
                     src={
                         !showPassword ? isHoveredEyeIcon ? eyeHover : eye :
-                        isHoveredEyeIcon ?  eyeSlashHover : eyeSlash
+                        isHoveredEyeIcon ? eyeSlashHover : eyeSlash
                     }
                     alt="Eye Icon"
                     title={!showPassword ? "Eye" : "Hidden"}
