@@ -4,7 +4,7 @@ import { createContext, useState /*useEffect,*/ /*, useRef*/ } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications';
 
-import { PublicRoutes, ProtectedRoutes, /*Dashboard, Profile,*/ Page404, BlockPage } from '~/pages/Others';
+import { PublicRoutes, ProtectedRoutes, /*Dashboard, Profile,*/ BlockPage, Page404 } from '~/pages/Others/index.js';
 
 import jwt_decode from 'jwt-decode';
 import DefaultLayout from '~/layouts/DefaultLayout';
@@ -17,6 +17,7 @@ function App() {
     const [isChangeUserInfo, setIsChangeUserInfo] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || true);
+    // const [activeFlag, setActiveFlag] = useState(false);
 
     // Get user temp role
     const getTempRole = () => {
