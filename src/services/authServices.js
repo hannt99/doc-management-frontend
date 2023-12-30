@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import httpRequest from '~/utils/httpRequest';
 
 // Sign in function
@@ -38,7 +38,7 @@ export const resetPassword = async (data = {}) => {
 // Refresh token function
 export const refresh = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
-    const decodedToken = jwt_decode(refreshToken);
+    const decodedToken = jwtDecode(refreshToken);
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh/${decodedToken._id}`, {
             token: refreshToken,

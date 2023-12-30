@@ -6,7 +6,7 @@ import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications';
 
 import { PublicRoutes, ProtectedRoutes, /*Dashboard, Profile,*/ BlockPage, Page404 } from '~/pages/Others/index.js';
 
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import DefaultLayout from '~/layouts/DefaultLayout';
 
 // import * as authServices from '~/services/authServices';
@@ -23,7 +23,7 @@ function App() {
     const getTempRole = () => {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) return;
-        const decodedToken = jwt_decode(accessToken);
+        const decodedToken = jwtDecode(accessToken);
         return decodedToken.role;
     };
 
