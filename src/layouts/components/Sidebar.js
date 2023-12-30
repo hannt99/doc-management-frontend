@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import SidebarItem from '~/components/SidebarItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -30,7 +30,7 @@ const Sidebar = () => {
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
         if (!token) return;
-        const decodedToken = jwt_decode(token);
+        const decodedToken = jwtDecode(token);
         setUserRole(decodedToken.role);
     }, []);
 

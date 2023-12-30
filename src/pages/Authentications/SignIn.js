@@ -7,7 +7,7 @@ import { emailValidator, passwordValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
 
 import * as authServices from '~/services/authServices';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
@@ -46,7 +46,7 @@ const SignIn = ({ setIsLoggedIn }) => {
         if (res.code === 200) {
             localStorage.setItem('accessToken', res.accessToken);
             localStorage.setItem('refreshToken', res.refreshToken);
-            const decodedToken = jwt_decode(res.accessToken);
+            const decodedToken = jwtDecode(res.accessToken);
             setLoading(false);
             successNotify(res.message);
             setIsLoggedIn(true);
@@ -56,7 +56,7 @@ const SignIn = ({ setIsLoggedIn }) => {
             errorNotify(res);
         }
     };
-
+    // flex items-center justify-center w-screen h-screen bg-[#ebedef]"
     return (
         <>
             <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">

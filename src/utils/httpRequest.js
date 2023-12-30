@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { refresh } from '~/services/authServices';
 
 const httpRequest = axios.create({
@@ -13,7 +13,7 @@ httpRequest.interceptors.request.use(
         const accessToken = localStorage.getItem('accessToken');
         let currentDate = new Date();
         if (accessToken) {
-            const decodedToken = jwt_decode(accessToken);
+            const decodedToken = jwtDecode(accessToken);
             if (decodedToken.exp * 1000 < currentDate.getTime()) {
                 const res = await refresh();
                 config.headers.Authorization = `Bearer ${res.accessToken}`;
