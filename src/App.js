@@ -2,9 +2,9 @@ import { createContext, useState /*useEffect,*/ /*, useRef*/ } from 'react';
 
 // import { io } from 'socket.io-client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications';
 
 import { PublicRoutes, ProtectedRoutes, /*Dashboard, Profile,*/ BlockPage, Page404 } from '~/pages/Others/index.js';
+import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications/index.js';
 
 import { jwtDecode } from 'jwt-decode';
 import DefaultLayout from '~/layouts/DefaultLayout';

@@ -57,6 +57,7 @@ const SignIn = ({ setIsLoggedIn }) => {
         }
     };
     // flex items-center justify-center w-screen h-screen bg-[#ebedef]"
+    // w-[330px] md:w-[450px] h-fit bg-white p-[36px] rounded-md shadow-4Way
     return (
         <>
             <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
