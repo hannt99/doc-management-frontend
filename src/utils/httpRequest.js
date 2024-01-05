@@ -7,7 +7,7 @@ const httpRequest = axios.create({
     headers: { 'Access-Control-Allow-Origin': '*' },
 });
 
-// Check exp of access token to genarate new refresh token
+// Check exp of access token to generate new refresh token
 httpRequest.interceptors.request.use(
     async (config) => {
         const accessToken = localStorage.getItem('accessToken');
@@ -16,9 +16,9 @@ httpRequest.interceptors.request.use(
             const decodedToken = jwtDecode(accessToken);
             if (decodedToken.exp * 1000 < currentDate.getTime()) {
                 const res = await refresh();
-                config.headers.Authorization = `Bearer ${res.accessToken}`;
+                config.headers.Authorization = `Bearer1 ${res.accessToken}`;
             } else {
-                config.headers.Authorization = `Bearer ${accessToken}`;
+                config.headers.Authorization = `Bearer2 ${accessToken}`;
             }
         }
         return config;

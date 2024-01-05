@@ -16,6 +16,7 @@ const BlockPage = () => {
         if (res.code === 200) {
             localStorage.clear();
             successNotify(res.message);
+            console.log('Dang xuat thanh cong');
             navigate('/sign-in');
         } else {
             errorNotify(res);
