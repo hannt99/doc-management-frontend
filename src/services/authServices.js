@@ -64,7 +64,7 @@ export const getCurrUser = async () => {
 // Sign out function
 export const signOut = async (data = {}) => {
     try {
-        const res = await httpRequest.post('/auth/signout', data);
+        const res = await httpRequest.post('/auth/sign-out', data);
         return res.data;
     } catch (error) {
         console.log(error);

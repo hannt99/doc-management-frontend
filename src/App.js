@@ -16,8 +16,8 @@ export const UserInfoContext = createContext();
 function App() {
     const [isChangeUserInfo, setIsChangeUserInfo] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || true);
-    // const [activeFlag, setActiveFlag] = useState(false);
+    // const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || true);
+    const [activeFlag, setActiveFlag] = useState(false);
 
     // Get user temp role
     const getTempRole = () => {
