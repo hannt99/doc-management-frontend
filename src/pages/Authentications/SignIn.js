@@ -27,7 +27,7 @@ const SignIn = ({ setIsLoggedIn }) => {
 
     const navigate = useNavigate();
 
-    // Sign in function
+    // Sign in
     const handleSubmit = async (e) => {
         e.preventDefault();
 
