@@ -37,3 +37,31 @@
 // import __uppercase from './uppercase.js';
 // __uppercase('test');
 
+// *** type (TypeScript) vs typedef (C/C++) ***
+// type MyNumber = number; // Creating an alias MyNumber for the number type
+// type Point = { 
+//     x: number; 
+//     y: number 
+// }; // Creating an alias Point for an object type
+
+// // Usage:
+// let num: MyNumber = 10;
+// let point: Point = { 
+//     x: 5, 
+//     y: 7 
+// };
+
+
+// typedef int MyInt; // Creating an alias MyInt for the int type
+// typedef struct {
+//     int x;
+//     int y;
+// } Point; // Creating an alias Point for a struct type
+
+// // Usage:
+// MyInt number = 10;
+// Point p;
+// p.x = 5;
+// p.y = 7;
+
+// nguyengiahuykt91@gmail.com

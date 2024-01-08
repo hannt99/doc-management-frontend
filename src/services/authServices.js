@@ -1,11 +1,13 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import httpRequest from '~/utils/httpRequest';
+import customLog from '~/utils/customLog';
 
 // Sign in function
 export const signIn = async (data = {}) => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/sign-in`, data);
+        customLog(res);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -17,8 +19,10 @@ export const signIn = async (data = {}) => {
 export const forgotPassword = async (data = {}) => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, data);
+        customLog(res);
         return res.data;
     } catch (error) {
+        customLog(error);
         console.log(error);
         return error.response.data.message;
     }
