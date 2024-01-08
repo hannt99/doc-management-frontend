@@ -4,6 +4,8 @@ import InputField from '~/components/InputField';
 import { emailValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
 import * as authServices from '~/services/authServices';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const ForgotPassword = () => {
@@ -76,6 +78,7 @@ const ForgotPassword = () => {
                     <Loading />
                 </div>
             )}
+            <ToastContainer />
         </>
     );
 };
