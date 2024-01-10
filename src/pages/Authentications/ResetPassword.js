@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useNavigate} from 'react-router-dom';
 import InputField from '~/components/InputField';
 import { passwordValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
 import * as authServices from '~/services/authServices';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const ResetPassword = () => {
@@ -19,7 +22,9 @@ const ResetPassword = () => {
 
     const [loading, setLoading] = useState(false);
 
-    // Reset password function
+    const navigate = useNavigate();
+
+    // Set new password
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -42,7 +47,12 @@ const ResetPassword = () => {
         if (res.code === 200) {
             localStorage.removeItem('resetPasswordToken');
             setLoading(false);
-            successNotify(res.message);
+            successNotify(res.message, 1500);
+            
+            const delay = 1500;
+            const timeoutId = setTimeout(() => {
+                navigate('/sign-in');
+            }, delay);
         } else {
             setLoading(false);
             errorNotify(res);
@@ -99,6 +109,7 @@ const ResetPassword = () => {
                     <Loading />
                 </div>
             )}
+            <ToastContainer />
         </>
     );
 };
