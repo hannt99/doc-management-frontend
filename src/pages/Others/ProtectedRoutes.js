@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 
 const isAuthenticated = () => {
-    const accessToken = localStorage.getItem('accessToken') || '';
+    const accessToken = localStorage.getItem('accessToken');
     return Boolean(accessToken);
 };
 

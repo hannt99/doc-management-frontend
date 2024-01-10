@@ -1,12 +1,13 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
+
 const isAuthenticated = () => {
-    const accessToken = localStorage.getItem('accessToken') || '';
+    const accessToken = localStorage.getItem('accessToken');
     return Boolean(accessToken);
 };
 
 const isUserRoleMember = () => {
-    const userRole = JSON.parse(localStorage.getItem('userRole')) || '';
+    const userRole = JSON.parse(localStorage.getItem('userRole'));
     return userRole === 'Member';
 };
 

@@ -16,7 +16,7 @@ const BlockPage = () => {
         if (res.code === 200) {
             localStorage.clear();
             successNotify(res.message);
-            console.log('Dang xuat thanh cong');
+            // console.log('Dang xuat thanh cong');
             navigate('/sign-in');
         } else {
             errorNotify(res);
@@ -26,20 +26,20 @@ const BlockPage = () => {
     return (
         <div className="flex items-center justify-center h-screen">
             <section className="bg-white">
-                <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-                    <div className="mx-auto max-w-screen-sm text-center">
-                        <h1 className="mb-4 text-[7.2rem] leading-[1] tracking-tight font-extrabold md:text-[12rem] text-red-600">
+                <div className="max-w-screen-xl mx-auto py-8 px-4 lg:py-16 lg:px-6">
+                    <div className="max-w-screen-sm mx-auto text-center">
+                        <h1 className="text-red-600 text-[7.2rem] md:text-[12rem] leading-[1] tracking-tight font-extrabold mb-4">
                             403
                         </h1>
-                        <p className="mb-4 text-[2.6rem] tracking-tight font-bold text-gray-900 md:text-[4.2rem]">
+                        <p className="text-gray-900 text-[2.6rem] md:text-[4.2rem] tracking-tight font-bold mb-4">
                             Truy cập bị từ chối.
                         </p>
-                        <p className="mb-4 text-[1.5rem] md:text-[1.8rem] font-light text-gray-500">
+                        <p className="text-gray-500 text-[1.5rem] md:text-[1.8rem] font-light mb-4">
                             Xin lỗi, tài khoản của bạn tạm thời bị vô hiệu hóa.
                         </p>
                         <div
                             onClick={handleSignOut}
-                            className="inline-block text-white bg-red-600 hover:bg-[#1b2e4b] font-medium rounded-lg text-[1.5rem] md:text-[1.8rem] px-6 py-3 text-center mt-8 transition-all duration-[1s] cursor-pointer"
+                            className="bg-red-600 hover:bg-[#1b2e4b] text-white text-[1.5rem] md:text-[1.8rem] font-medium inline-block rounded-lg px-6 py-3 text-center mt-8 cursor-pointer transition-all duration-[1s]"
                         >
                             Đăng xuất ngay
                         </div>

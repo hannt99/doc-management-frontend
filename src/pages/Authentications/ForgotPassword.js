@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useNavigate, NavLink} from 'react-router-dom';
 import InputField from '~/components/InputField';
 import { emailValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
@@ -11,13 +11,16 @@ import { successNotify, errorNotify } from '~/components/ToastMessage';
 const ForgotPassword = () => {
     // Input state
     const [email, setEmail] = useState('');
+
     // Input validation state
     const [isEmailErr, setIsEmailErr] = useState(false);
     const [emailErrMsg, setEmailErrMsg] = useState({});
 
     const [loading, setLoading] = useState(false);
 
-    // Send email to reset password
+    const navigate = useNavigate();
+
+    // Send email contains link to reset password
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -33,7 +36,12 @@ const ForgotPassword = () => {
         if (res.code === 200) {
             localStorage.setItem('resetPasswordToken', res.resetPasswordToken);
             setLoading(false);
-            successNotify(res.message);
+            successNotify(res.message, 2500);
+
+            const delay = 2500;
+            const timeoutId = setTimeout(() => {
+                navigate('/sign-in');
+            }, delay);
         } else {
             setLoading(false);
             errorNotify(res);
