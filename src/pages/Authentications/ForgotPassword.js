@@ -20,7 +20,7 @@ const ForgotPassword = () => {
 
     const navigate = useNavigate();
 
-    // Send email contains link to reset password
+    // Send an email containing a link to reset the password
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -36,7 +36,7 @@ const ForgotPassword = () => {
         if (res.code === 200) {
             localStorage.setItem('resetPasswordToken', res.resetPasswordToken);
             setLoading(false);
-            successNotify(res.message, 2500);
+            successNotify(res.message, 1500);
 
             const delay = 2500;
             const timeoutId = setTimeout(() => {
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
             }, delay);
         } else {
             setLoading(false);
-            errorNotify(res);
+            errorNotify(res, 1500);
         }
     };
 

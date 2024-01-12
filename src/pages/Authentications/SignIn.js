@@ -50,12 +50,12 @@ const SignIn = ({ setIsLoggedIn }) => {
             localStorage.setItem('refreshToken', res.refreshToken);
             const decodedToken = jwtDecode(res.accessToken);
             setLoading(false);
-            successNotify(res.message);
+            // successNotify(res.message);
             setIsLoggedIn(true);
             navigate(decodedToken.role === 'Member' ? '/documents/documents-in' : '/dashboard');
         } else {
             setLoading(false);
-            errorNotify(res);
+            errorNotify(res, 1500);
         }
     };
     return (
