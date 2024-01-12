@@ -55,7 +55,7 @@ const ResetPassword = () => {
             }, delay);
         } else {
             setLoading(false);
-            errorNotify(res);
+            errorNotify(res, 1500);
         }
     };
 

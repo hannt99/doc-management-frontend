@@ -5,7 +5,7 @@ import { successNotify, errorNotify } from '~/components/ToastMessage';
 const BlockPage = () => {
     const navigate = useNavigate();
 
-    // Sign out function
+    // Sign out
     const handleSignOut = async () => {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) return;
@@ -15,8 +15,7 @@ const BlockPage = () => {
         const res = await authServices.signOut(data);
         if (res.code === 200) {
             localStorage.clear();
-            successNotify(res.message);
-            // console.log('Dang xuat thanh cong');
+            successNotify(res.message, 1500);
             navigate('/sign-in');
         } else {
             errorNotify(res);
