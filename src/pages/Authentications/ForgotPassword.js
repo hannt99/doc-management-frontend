@@ -38,7 +38,7 @@ const ForgotPassword = () => {
             setLoading(false);
             successNotify(res.message, 1500);
 
-            const delay = 2500;
+            const delay = 1500;
             const timeoutId = setTimeout(() => {
                 navigate('/sign-in');
             }, delay);

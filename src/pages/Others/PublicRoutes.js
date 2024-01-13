@@ -7,7 +7,8 @@ const isAuthenticated = () => {
 };
 
 const isUserRoleMember = () => {
-    const userRole = JSON.parse(localStorage.getItem('userRole'));
+    // const userRole = JSON.stringify(localStorage.getItem('userRole'));
+    const userRole = !localStorage.getItem('userRole') ? '' : localStorage.getItem('userRole');
     return userRole === 'Member';
 };
 

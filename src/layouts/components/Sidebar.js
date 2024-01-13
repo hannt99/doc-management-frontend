@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import SidebarItem from '~/components/SidebarItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,10 +18,13 @@ import {
     faTableList,
     faGear,
 } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
+
 
 const Sidebar = () => {
-    const [userRole, setUserRole] = useState(JSON.parse(localStorage.getItem('userRole')));
-    const [toggleSubMenu, setToggleSubMenu] = useState(false);
+    // const [userRole, setUserRole] = useState(JSON.parse(localStorage.getItem('userRole')));
+    const [userRole, setUserRole] = useState(!localStorage.getItem('userRole') ? '' : localStorage.getItem('userRole'));
+    const [toggleSubMenu1, setToggleSubMenu1] = useState(false);
     const [toggleSubMenu2, setToggleSubMenu2] = useState(false);
     const [toggleSubMenu3, setToggleSubMenu3] = useState(false);
 
@@ -30,6 +32,7 @@ const Sidebar = () => {
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
         if (!token) return;
+
         const decodedToken = jwtDecode(token);
         setUserRole(decodedToken.role);
     }, []);
@@ -45,22 +48,23 @@ const Sidebar = () => {
                 <div className={userRole === 'Moderator' || userRole === 'Admin' ? '' : 'hidden'}>
                     <SidebarItem path="/dashboard" icon={faGauge} title="Bảng điều khiển" />
                 </div>
+
                 <SidebarItem
                     path="/documents"
                     className="hello"
-                    onClick={() => setToggleSubMenu(!toggleSubMenu)}
                     icon={faFile}
                     title="Văn bản"
+                    onClick={() => setToggleSubMenu1(!toggleSubMenu1)}
                     firstElement={
                         <FontAwesomeIcon
                             className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
-                            icon={toggleSubMenu ? faAngleDown : faAngleRight}
+                            icon={toggleSubMenu1 ? faAngleDown : faAngleRight}
                         />
                     }
                     secondElement={
                         <ul
                             className={
-                                !toggleSubMenu
+                                !toggleSubMenu1
                                     ? 'max-h-0 transition-height duration-[1s] overflow-hidden'
                                     : 'max-h-[300px] transition-height duration-[1.5s] overflow-hidden'
                             }
@@ -70,6 +74,7 @@ const Sidebar = () => {
                         </ul>
                     }
                 />
+                
                 <SidebarItem path="/tasks" icon={faListCheck} title="Việc cần làm" />
                 <div className={userRole === 'Moderator' || userRole === 'Admin' ? '' : 'hidden'}>
                     <SidebarItem path="/departments" icon={faLayerGroup} title="Phòng ban" />
