@@ -1,4 +1,4 @@
-import { createContext, useState /*useEffect,*/ /*, useRef*/ } from 'react';
+import { createContext, useState, useEffect /*, useRef*/ } from 'react';
 
 // import { io } from 'socket.io-client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -9,15 +9,35 @@ import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications/i
 import { jwtDecode } from 'jwt-decode';
 import DefaultLayout from '~/layouts/DefaultLayout';
 
-// import * as authServices from '~/services/authServices';
+import * as authServices from '~/services/authServices';
+import customLog from './utils/customLog';
 
 export const UserInfoContext = createContext();
 
 function App() {
     const [isChangeUserInfo, setIsChangeUserInfo] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || true);
-    const [activeFlag, setActiveFlag] = useState(false);
+    const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || true);
+    // const [activeFlag, setActiveFlag] = useState(false);
+
+    // Get isActived user from accessToken after sign in
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return;
+
+        const fetchApi = async () => {
+            const res = await authServices.getCurrUser();
+            // customLog(res);
+            setActiveFlag(res.isActived);
+        };
+
+        fetchApi();
+    }, [isLoggedIn]);
+
+    // Save isActived user in localstorage after sign in
+    useEffect(() => {
+        localStorage.setItem('activeFlag', JSON.stringify(activeFlag));
+    }, [isLoggedIn, activeFlag]);
 
     // Get user temp role
     const getTempRole = () => {
