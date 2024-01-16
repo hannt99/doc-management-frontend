@@ -19,7 +19,7 @@ import {
     faGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
-
+import customLog from '~/utils/customLog';
 
 const Sidebar = () => {
     // const [userRole, setUserRole] = useState(JSON.parse(localStorage.getItem('userRole')));
@@ -35,6 +35,10 @@ const Sidebar = () => {
 
         const decodedToken = jwtDecode(token);
         setUserRole(decodedToken.role);
+        return () => {
+            // customLog(localStorage.getItem('userRole'));
+            // customLog(userRole === '');
+        };
     }, []);
 
     return (
@@ -45,7 +49,7 @@ const Sidebar = () => {
                 </h1>
             </div>
             <ul>
-                <div className={userRole === 'Moderator' || userRole === 'Admin' ? '' : 'hidden'}>
+                <div className={!(userRole === 'Moderator') && !(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem path="/dashboard" icon={faGauge} title="Bảng điều khiển" />
                 </div>
 
@@ -74,18 +78,17 @@ const Sidebar = () => {
                         </ul>
                     }
                 />
-                
                 <SidebarItem path="/tasks" icon={faListCheck} title="Việc cần làm" />
-                <div className={userRole === 'Moderator' || userRole === 'Admin' ? '' : 'hidden'}>
+                <div className={!(userRole === 'Moderator') && !(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem path="/departments" icon={faLayerGroup} title="Phòng ban" />
                 </div>
-                <div className={userRole === 'Admin' ? '' : 'hidden'}>
+                <div className={!(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem
-                        onClick={() => setToggleSubMenu3(!toggleSubMenu3)}
-                        className="hello"
                         path="/users"
+                        className="hello"
                         icon={faUser}
                         title="Thành viên"
+                        onClick={() => setToggleSubMenu2(!toggleSubMenu2)}
                         firstElement={
                             <FontAwesomeIcon
                                 className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
@@ -106,13 +109,13 @@ const Sidebar = () => {
                         }
                     />
                 </div>
-                <div className={userRole === 'Moderator' || userRole === 'Admin' ? '' : 'hidden'}>
+                <div className={!(userRole === 'Moderator') && !(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem
-                        onClick={() => setToggleSubMenu2(!toggleSubMenu2)}
-                        className="hello"
                         path="/statistics"
+                        className="hello"
                         icon={faChartColumn}
                         title="Báo cáo thống kê"
+                        onClick={() => setToggleSubMenu3(!toggleSubMenu3)}
                         firstElement={
                             <FontAwesomeIcon
                                 className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
