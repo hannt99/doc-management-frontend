@@ -19,7 +19,7 @@ const SidebarItem = (props) => {
                                       : 'flex items-center py-[18px] pl-[25px] pointer-events-none'
                             : ({ isActive }) =>
                                   isActive
-                                      ? 'flex items-center py-[18px] pl-[25px] bg-[#46546c] text-white hover:text-white'
+                                      ? 'flex items-center py-[18px] pl-[25px] bg-[#46546c] text-white hover:text-[white]'
                                       : 'flex items-center py-[18px] pl-[25px]' 
                     }
                 >
