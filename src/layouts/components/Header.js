@@ -1,29 +1,55 @@
 import { useState, useEffect /* useContext */ } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars /*, faCaretDown, faKey, faRightFromBracket, faUser*/ } from '@fortawesome/free-solid-svg-icons';
-// import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
+import NotificationCard from '~/components/Card/NotificationCard';
+import * as notificationServices from '~/services/notificationServices';
 // import ChangePasswordForm from '~/components/Form/ChangePasswordForm';
 // import { NavLink, useNavigate } from 'react-router-dom';
 // import * as authServices from '~/services/authServices';
-// import * as notificationServices from '~/services/notificationServices';
-// import { successNotify, errorNotify } from '~/components/ToastMessage';
+import { successNotify, errorNotify } from '~/components/ToastMessage';
 // import { UserInfoContext } from '~/App';
-// import NotificationCard from '~/components/Card/NotificationCard';
 
-const Header = ({ setToggle, socket }) => {
+const Header = ({ setToggle /*socket*/ }) => {
     const [toggleSidebar, setToggleSidebar] = useState(true);
     // const [toggleSidebar, setToggleSidebar] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [tab, setTab] = useState(false);
+    const [notification, setNotification] = useState(null);
+    const [isSave, setIsSave] = useState(false);
 
-    // const [isSave, setIsSave] = useState(false);
-    // const [tab, setTab] = useState(false);
-    // const [notification, setNotification] = useState(null);
-    // const [notifications, setNotifications] = useState([]);
     // const [showChangePassword, setShowChangePassword] = useState(false);
     // const [userAvatar, setUserAvatar] = useState('');
     // const [userName, setUserName] = useState('');
 
     // const { isChangeUserInfo } = useContext(UserInfoContext);
     // const navigate = useNavigate();
+
+    // unRead notification length function
+    const notificationNotReadLength = (notifications) => {
+        const length = notifications?.filter((item) => item.isRead === false).length;
+        return length;
+        // return 10;
+    };
+
+    // isRead notification function
+    const handleChangeNotificationStatus = async (id) => {
+        await notificationServices.changeNotificationStatus(id);
+        setIsSave((isSave) => !isSave);
+    };
+
+    // Delete one comment
+    const handleDelete = async (id) => {
+        const confirmMsg = `Bạn có chắc muốn xóa vĩnh viễn thông báo không?`;
+        if (!window.confirm(confirmMsg)) return;
+        const res = await notificationServices.deleteNotificationById(id);
+        if (res.code === 200) {
+            successNotify(res.message);
+            setIsSave((isSave) => !isSave);
+        } else {
+            errorNotify(res);
+        }
+    };
 
     // Sign out function
     // const handleSignOut = async () => {
@@ -37,31 +63,6 @@ const Header = ({ setToggle, socket }) => {
     //         localStorage.clear();
     //         successNotify(res.message);
     //         navigate('/signin');
-    //     } else {
-    //         errorNotify(res);
-    //     }
-    // };
-
-    // isRead notification function
-    // const handleChangeNotificationStatus = async (id) => {
-    //     await notificationServices.changeNotificationStatus(id);
-    //     setIsSave((isSave) => !isSave);
-    // };
-
-    // unRead notification length function
-    // const notificationNotReadLength = (notifications) => {
-    //     const length = notifications?.filter((item) => item.isRead === false).length;
-    //     return length;
-    // };
-
-    // Delete one comment
-    // const handleDelete = async (id) => {
-    //     const confirmMsg = `Bạn có chắc muốn xóa vĩnh viễn thông báo không?`;
-    //     if (!window.confirm(confirmMsg)) return;
-    //     const res = await notificationServices.deleteNotificationById(id);
-    //     if (res.code === 200) {
-    //         successNotify(res.message);
-    //         setIsSave((isSave) => !isSave);
     //     } else {
     //         errorNotify(res);
     //     }
@@ -132,7 +133,7 @@ const Header = ({ setToggle, socket }) => {
                 <div className="flex items-center">
                     <div className="flex group relative p-[8px] hover:text-black cursor-pointer">
                         <FontAwesomeIcon className="text-[2.2rem] leading-none m-auto" icon={faBell} />
-                        {/* <p
+                        <p
                             className={
                                 notificationNotReadLength(notifications) > 0
                                     ? 'absolute block top-0 right-0 text-center min-w-[18px] text-[1rem] font-semibold text-[white] bg-red-600 p-1.5 rounded-full leading-none'
@@ -197,7 +198,7 @@ const Header = ({ setToggle, socket }) => {
                                     </li>
                                 )}
                             </ul>
-                        </div> */}
+                        </div>
                     </div>
                     {/* <div className="relative group">
                         <div className="flex items-center gap-x-3 cursor-pointer">
