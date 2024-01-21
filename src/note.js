@@ -39,18 +39,17 @@
 
 // *** type (TypeScript) vs typedef (C/C++) ***
 // type MyNumber = number; // Creating an alias MyNumber for the number type
-// type Point = { 
-//     x: number; 
-//     y: number 
+// type Point = {
+//     x: number;
+//     y: number
 // }; // Creating an alias Point for an object type
 
 // // Usage:
 // let num: MyNumber = 10;
-// let point: Point = { 
-//     x: 5, 
-//     y: 7 
+// let point: Point = {
+//     x: 5,
+//     y: 7
 // };
-
 
 // typedef int MyInt; // Creating an alias MyInt for the int type
 // typedef struct {
@@ -65,3 +64,19 @@
 // p.y = 7;
 
 // nguyengiahuykt91@gmail.com
+
+<svg
+    aria-hidden="true"
+    focusable="false"
+    data-prefix="fas"
+    data-icon="bars"
+    class="svg-inline--fa fa-bars"
+    role="img"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 448 512"
+>
+    <path
+        fill="currentColor"
+        d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"
+    ></path>
+</svg>;

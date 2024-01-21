@@ -17,6 +17,7 @@ const DefaultLayout = ({ children /*, socket*/ }) => {
                         ? 'fixed top-0 bottom-0 left-0 w-[256px] h-screen shadow-right transition-all duration-[1s] z-30'
                         : 'fixed top-0 bottom-0 left-[-100%] w-[256px] h-screen shadow-right transition-all duration-[1s] z-30'
                 }
+                id="here4"
             >
                 <Sidebar />
             </div>
@@ -27,6 +28,7 @@ const DefaultLayout = ({ children /*, socket*/ }) => {
                         ? 'pl-0 xl:pl-[256px] transition-all duration-[1s] h-screen'
                         : 'pl-0 xl:pl-[0px] transition-all duration-[1s] h-screen'
                 }
+                id="here3"
             >
                 <div
                     className={
@@ -35,6 +37,7 @@ const DefaultLayout = ({ children /*, socket*/ }) => {
                             ? 'fixed top-0 left-[256px] right-0 transition-all duration-[1s] z-30'
                             : 'fixed top-0 xl:left-[256px] left-0 right-0 transition-all duration-[1s] z-30'
                     }
+                    id="here2"
                 >
                     <Header setToggle={setToggleSidebar} /*socket={socket}>*/ />
                 </div>

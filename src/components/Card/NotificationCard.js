@@ -22,7 +22,7 @@ const NotificationCard = (props) => {
             )}
             <div
                 onClick={props.handleDelete}
-                className="hidden absolute top-[50%] translate-y-[-50%] right-[36px] w-[30px] h-[30px] bg-white text-[1.8rem] leading-none rounded-full shadow-4Way group-hover/item-list:flex"
+                className="hidden group-hover/item-list:flex absolute top-[50%] translate-y-[-50%] right-[36px] w-[30px] h-[30px] bg-white rounded-full shadow-4Way text-[1.8rem] leading-none"
             >
                 <FontAwesomeIcon className="m-auto" icon={faXmark} />
             </div>
