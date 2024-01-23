@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
+
 const ResetPassword = () => {
     // Input state
     const [newPassword, setNewPassword] = useState('');
@@ -40,8 +41,8 @@ const ResetPassword = () => {
         setLoading(true);
 
         const data = {
-            token: localStorage.getItem('resetPasswordToken'),
             password: newPassword,
+            token: localStorage.getItem('resetPasswordToken')
         };
         const res = await authServices.resetPassword(data);
         if (res.code === 200) {
@@ -62,11 +63,11 @@ const ResetPassword = () => {
     return (
         <>
             <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
-                <div className="w-[330px] md:w-[450px] h-fit bg-white p-[36px] rounded-md shadow-4Way">
-                    <h1 className="text-[#9fa9ae] text-center italic text-[4.6rem] font-semibold">
+                <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way p-[36px] bg-white">
+                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-[#9fa9ae] text-center text-[2.0rem] font-medium mb-16">Đặt lại mật khẩu</h1>
+                    <h1 className="mb-16 text-center text-[2.0rem] font-medium text-[#9fa9ae]">Đặt lại mật khẩu</h1>
                     <form>
                         <InputField
                             placeholder="Mật khẩu mới"
@@ -76,7 +77,7 @@ const ResetPassword = () => {
                             onBlur={() => passwordValidator(newPassword, newPassword, setIsNewPasswordErr, setNewPasswordErrMsg)}
                             className={isNewPasswordErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-red-600 text-[1.3rem]">{newPasswordErrMsg.newPassword}</p>
+                        <p className="text-[1.3rem] text-red-600">{newPasswordErrMsg.newPassword}</p>
                         <div className="mt-7">
                             <InputField
                                 placeholder="Xác nhận mật khẩu"
@@ -93,11 +94,11 @@ const ResetPassword = () => {
                                 }
                                 className={isConfirmPasswordErr ? 'invalid' : 'default'}
                             />
-                            <p className="text-red-600 text-[1.3rem]">{confirmPasswordErrMsg.confirmPassword}</p>
+                            <p className="text-[1.3rem] text-red-600">{confirmPasswordErrMsg.confirmPassword}</p>
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full text-[white] bg-[#321fdb] mt-12 px-[16px] py-[8px] rounded-md hover:bg-[#1b2e4b] transition-all duration-[1s]"
+                            className="w-full mt-12 rounded-md px-[16px] py-[8px] bg-[#321fdb] hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
                         >
                             Đặt lại
                         </button>

@@ -6,7 +6,7 @@ const Loading = () => {
             role="status"
         >
             <span
-                className="!absolute !w-px !h-px !border-0 !p-0 !-m-px !whitespace-nowrap !overflow-hidden ![clip:rect(0,0,0,0)]"
+                className="!absolute !w-px !h-px !border-0 !-m-px !p-0 !whitespace-nowrap !overflow-hidden ![clip:rect(0,0,0,0)]"
             >
                 Loading...
             </span>

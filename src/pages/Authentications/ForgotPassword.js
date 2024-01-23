@@ -38,11 +38,10 @@ const ForgotPassword = () => {
             localStorage.setItem('resetPasswordToken', res.resetPasswordToken);
             setLoading(false);
             successNotify(res.message, 1500);
-
-            const delay = 1500;
-            const timeoutId = setTimeout(() => {
-                navigate('/sign-in');
-            }, delay);
+            // const delay = 1500;
+            // const timeoutId = setTimeout(() => {
+            //     navigate('/sign-in');
+            // }, delay);
         } else {
             setLoading(false);
             errorNotify(res, 1500);
@@ -52,11 +51,11 @@ const ForgotPassword = () => {
     return (
         <>
             <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
-                <div className="w-[330px] md:w-[450px] h-fit bg-white p-[36px] rounded-md shadow-4Way">
-                    <h1 className="text-[#9fa9ae] text-center text-[4.6rem] font-semibold italic">
+                <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way p-[36px] bg-white">
+                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-[#9fa9ae] text-center text-[2.0rem] font-medium mb-16">Quên mật khẩu</h1>
+                    <h1 className="mb-16 text-center text-[2.0rem] font-medium text-[#9fa9ae]">Quên mật khẩu</h1>
                     <form autoComplete="on">
                         <InputField
                             placeholder="Email"
@@ -67,15 +66,15 @@ const ForgotPassword = () => {
                             onBlur={() => emailValidator(email, setIsEmailErr, setEmailErrMsg)}
                             className={isEmailErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-red-600 text-[1.3rem]">{emailErrMsg.email}</p>
-                        <div className="text-right mt-7">
+                        <p className="text-[1.3rem] text-red-600">{emailErrMsg.email}</p>
+                        <div className=" mt-7 text-right">
                             <NavLink className="hover:underline" to="/sign-in">
                                 {'<<'} Trở về đăng nhập
                             </NavLink>
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full rounded-md bg-[#321fdb] mt-10 text-[white] px-[16px] py-[8px] hover:bg-[#1b2e4b] transition-all duration-[1s]"
+                            className="w-full mt-10 rounded-md px-[16px] py-[8px] bg-[#321fdb] hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
                         >
                             Gửi
                         </button>

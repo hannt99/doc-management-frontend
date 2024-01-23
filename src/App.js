@@ -15,7 +15,6 @@ import customLog from './utils/customLog';
 
 export const UserInfoContext = createContext();
 
-
 function App() {
     const [isChangeUserInfo, setIsChangeUserInfo] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +44,7 @@ function App() {
     const getTempRole = () => {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) return;
+
         const decodedToken = jwtDecode(accessToken);
         return decodedToken.role;
     };

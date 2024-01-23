@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import InputField from '~/components/InputField';
 import { emailValidator, passwordValidator } from '~/utils/formValidation';
@@ -9,9 +9,10 @@ import Loading from '~/components/Loading';
 import * as authServices from '~/services/authServices';
 import { jwtDecode } from 'jwt-decode';
 
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
+
 
 const SignIn = ({ setIsLoggedIn }) => {
     // Input state
@@ -58,14 +59,15 @@ const SignIn = ({ setIsLoggedIn }) => {
             errorNotify(res, 1500);
         }
     };
+
     return (
         <>
             <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
-                <div className="w-[330px] md:w-[450px] h-fit bg-white p-[36px] rounded-md shadow-4Way">
-                    <h1 className="text-[#9fa9ae] text-center text-[4.6rem] font-semibold italic">
+                <div className="w-[330px] md:w-[450px] p-[36px] h-fit bg-white rounded-md shadow-4Way">
+                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-[#9fa9ae] text-center text-[2.0rem] font-medium mb-16">Đăng nhập</h1>
+                    <h1 className="mb-16 text-center text-[2.0rem] font-medium text-[#9fa9ae]">Đăng nhập</h1>
                     <form id="sign-in" autoComplete="on">
                         <InputField
                             placeholder="Email"
@@ -76,7 +78,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                             onBlur={() => emailValidator(email, setIsEmailErr, setEmailErrMsg)}
                             className={isEmailErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-red-600 text-[1.3rem]">{emailErrMsg.email}</p>
+                        <p className="text-[1.3rem] text-red-600">{emailErrMsg.email}</p>
                         <div className="mt-7">
                             <InputField
                                 placeholder="Mật khẩu"
@@ -88,7 +90,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                                 }
                                 className={isPasswordErr ? 'invalid' : 'default'}
                             />
-                            <p className="text-red-600 text-[1.3rem]">{passwordErrMsg.password}</p>
+                            <p className="text-[1.3rem] text-red-600">{passwordErrMsg.password}</p>
                         </div>
                         <div className="mt-7 text-right">
                             <NavLink className="hover:underline" to="/forgot-password">
@@ -97,7 +99,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full text-[white] bg-[#321fdb] mt-10 px-[16px] py-[8px] rounded-md hover:bg-[#1b2e4b] transition-all duration-[1s]"
+                            className="w-full mt-10 rounded-md px-[16px] py-[8px] bg-[#321fdb] hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
                         >
                             Đăng nhập
                         </button>
