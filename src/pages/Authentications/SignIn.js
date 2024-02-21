@@ -13,7 +13,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
-
 const SignIn = ({ setIsLoggedIn }) => {
     // Input state
     const [email, setEmail] = useState('');
@@ -62,12 +61,12 @@ const SignIn = ({ setIsLoggedIn }) => {
 
     return (
         <>
-            <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
-                <div className="w-[330px] md:w-[450px] p-[36px] h-fit bg-white rounded-md shadow-4Way">
-                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
+            <div className="w-screen h-screen bg-[#ebedef] flex items-center justify-center">
+                <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way bg-white p-[36px]">
+                    <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="mb-16 text-center text-[2.0rem] font-medium text-[#9fa9ae]">Đăng nhập</h1>
+                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] mb-16 font-medium">Đăng nhập</h1>
                     <form id="sign-in" autoComplete="on">
                         <InputField
                             placeholder="Email"
@@ -78,7 +77,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                             onBlur={() => emailValidator(email, setIsEmailErr, setEmailErrMsg)}
                             className={isEmailErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-[1.3rem] text-red-600">{emailErrMsg.email}</p>
+                        <p className="text-red-600 text-[1.3rem]">{emailErrMsg.email}</p>
                         <div className="mt-7">
                             <InputField
                                 placeholder="Mật khẩu"
@@ -92,14 +91,14 @@ const SignIn = ({ setIsLoggedIn }) => {
                             />
                             <p className="text-[1.3rem] text-red-600">{passwordErrMsg.password}</p>
                         </div>
-                        <div className="mt-7 text-right">
+                        <div className="text-right mt-7">
                             <NavLink className="hover:underline" to="/forgot-password">
                                 Quên mật khẩu?
                             </NavLink>
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full mt-10 rounded-md px-[16px] py-[8px] bg-[#321fdb] hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
+                            className="w-full mt-10 rounded-md bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
                         >
                             Đăng nhập
                         </button>
@@ -107,7 +106,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                 </div>
             </div>
             {loading && (
-                <div className="fixed top-0 left-0 bottom-0 right-0 flex items-center justify-center bg-[#000000]/[.25] z-[999]">
+                <div className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[.25] z-[999] flex items-center justify-center">
                     <Loading />
                 </div>
             )}

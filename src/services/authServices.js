@@ -1,14 +1,11 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import httpRequest from '~/utils/httpRequest';
-import customLog from '~/utils/customLog';
-
 
 // Sign in function
 export const signIn = async (data = {}) => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/sign-in`, data);
-        // customLog(res);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -20,10 +17,8 @@ export const signIn = async (data = {}) => {
 export const forgotPassword = async (data = {}) => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, data);
-        // customLog(res);
         return res.data;
     } catch (error) {
-        // customLog(error);
         console.log(error);
         return error.response.data.message;
     }
@@ -40,22 +35,6 @@ export const resetPassword = async (data = {}) => {
     }
 };
 
-// Refresh token function
-export const refresh = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    const decodedToken = jwtDecode(refreshToken);
-    try {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh/${decodedToken._id}`, {
-            token: refreshToken,
-        });
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('refreshToken', res.data.refreshToken);
-        return res.data;
-    } catch (err) {
-        console.log(err);
-    }
-};
-
 // Get current user function
 export const getCurrUser = async () => {
     try {
@@ -63,6 +42,22 @@ export const getCurrUser = async () => {
         return res.data;
     } catch (error) {
         console.log(error);
+    }
+};
+
+// Refresh token function
+export const refresh = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+        const decodedToken = jwtDecode(refreshToken);
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh/${decodedToken._id}`, {
+            token: refreshToken
+        });
+        localStorage.setItem('accessToken', res.data.accessToken);
+        localStorage.setItem('refreshToken', res.data.refreshToken);
+        return res.data;
+    } catch (err) {
+        console.log(err);
     }
 };
 

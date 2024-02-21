@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 
-export const successNotify = (msg, l=2500) =>
+export const successNotify = (msg, l = 2500) =>
     toast.success(msg, {
         position: 'top-center',
         autoClose: l,
@@ -13,7 +13,7 @@ export const successNotify = (msg, l=2500) =>
         theme: 'colored',
     });
 
-export const errorNotify = (msg, l=2500) =>
+export const errorNotify = (msg, l = 2500) =>
     toast.error(msg, {
         position: 'top-center',
         autoClose: l,

@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import InputField from '~/components/InputField';
-import { passwordValidator } from '~/utils/formValidation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { passwordValidator } from '~/utils/formValidation';
 import * as userServices from '~/services/userServices';
 import Loading from '../Loading';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
-
 
 const ChangePasswordForm = ({ setShowChangePassword }) => {
     // Input state
@@ -19,11 +16,11 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
     const [password, setPassword] = useState('');
     const [isPasswordErr, setIsPasswordErr] = useState(false);
     const [passwordErrMsg, setPasswordErrMsg] = useState({});
-    
+
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isConfirmPasswordErr, setIsConfirmPasswordErr] = useState(false);
     const [confirmPasswordErrMsg, setConfirmPasswordErrMsg] = useState({});
-    
+
     const [loading, setLoading] = useState(false);
 
     // Change password function
@@ -53,28 +50,28 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
         const res = await userServices.changePassword(data);
         if (res.code === 200) {
             setLoading(false);
-            successNotify(res.message);
+            successNotify(res.message, 1500);
             setShowChangePassword(false);
         } else {
             setLoading(false);
-            errorNotify(res);
+            errorNotify(res, 1500);
         }
     };
 
     return (
         <>
             <div
+                className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[0.3] flex items-center justify-center"
                 onClick={() => setShowChangePassword(false)}
-                className="fixed top-0 left-0 bottom-0 right-0 flex items-center justify-center bg-[#000000]/[0.3]"
             >
                 <div
                     onClick={(e) => e.stopPropagation()}
                     className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way p-[36px] bg-white animate-fadeIn z-[999]"
                 >
-                    <h1 className="text-[4.6rem] italic font-semibold text-[#9fa9ae] text-center">
+                    <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="mb-16 text-[2.0rem] font-medium text-[#9fa9ae] text-center">Đổi mật khẩu</h1>
+                    <h1 className="text-center mb-16 text-[#9fa9ae] text-[2.0rem] font-medium">Đổi mật khẩu</h1>
                     <form>
                         <InputField
                             placeholder="Mật khẩu cũ"
@@ -86,7 +83,7 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                             }
                             className={isOldPasswordErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-[1.3rem] text-red-600 ">{oldPasswordErrMsg.oldPassword}</p>
+                        <p className="text-red-600 text-[1.3rem]">{oldPasswordErrMsg.oldPassword}</p>
                         <div className="mt-7">
                             <InputField
                                 placeholder="Mật khẩu mới"
@@ -136,11 +133,10 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                 </div>
             </div>
             {loading && (
-                <div className="fixed top-0 left-0 bottom-0 right-0 flex items-center justify-center bg-[#000000]/[.15] z-[999]">
+                <div className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[.15] z-[999] flex items-center justify-center">
                     <Loading />
                 </div>
             )}
-            <ToastContainer />
         </>
     );
 };

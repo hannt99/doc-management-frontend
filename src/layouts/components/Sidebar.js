@@ -19,8 +19,7 @@ import {
     faGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
-import customLog from '~/utils/customLog';
-
+// import customLog from '~/utils/customLog';
 
 const Sidebar = () => {
     // const [userRole, setUserRole] = useState(JSON.parse(localStorage.getItem('userRole')));
@@ -44,9 +43,9 @@ const Sidebar = () => {
 
     return (
         <div className="w-full h-full bg-[#3c4b64] overflow-auto">
-            <div className="flex h-[64px] bg-[#303c54] italic">
-                <h1 className="text-white text-[3.6rem] m-auto">
-                    QLVB <span className="text-[1.6rem]">v1.0</span>
+            <div className="h-[64px] bg-[#303c54] flex italic">
+                <h1 className="m-auto text-white text-[3.6rem]">
+                    QLVB<span className="text-[1.6rem]">v1.0</span>
                 </h1>
             </div>
             <ul>
@@ -62,7 +61,7 @@ const Sidebar = () => {
                     onClick={() => setToggleSubMenu1(!toggleSubMenu1)}
                     firstElement={
                         <FontAwesomeIcon
-                            className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
+                            className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[#ffffff]/[0.3]"
                             icon={toggleSubMenu1 ? faAngleDown : faAngleRight}
                         />
                     }
@@ -70,7 +69,7 @@ const Sidebar = () => {
                         <ul
                             className={
                                 !toggleSubMenu1
-                                    ? 'max-h-0 transition-height duration-[1s] overflow-hidden'
+                                    ? 'max-h-0       transition-height duration-[1s]   overflow-hidden'
                                     : 'max-h-[300px] transition-height duration-[1.5s] overflow-hidden'
                             }
                         >
@@ -79,10 +78,13 @@ const Sidebar = () => {
                         </ul>
                     }
                 />
+
                 <SidebarItem path="/tasks" icon={faListCheck} title="Việc cần làm" />
+
                 <div className={!(userRole === 'Moderator') && !(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem path="/departments" icon={faLayerGroup} title="Phòng ban" />
                 </div>
+
                 <div className={!(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem
                         path="/users"
@@ -92,7 +94,7 @@ const Sidebar = () => {
                         onClick={() => setToggleSubMenu2(!toggleSubMenu2)}
                         firstElement={
                             <FontAwesomeIcon
-                                className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
+                                className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[#ffffff]/[0.3]"
                                 icon={toggleSubMenu2 ? faAngleDown : faAngleRight}
                             />
                         }
@@ -100,7 +102,7 @@ const Sidebar = () => {
                             <ul
                                 className={
                                     !toggleSubMenu2
-                                        ? 'max-h-0 transition-height duration-[1s] overflow-hidden'
+                                        ? 'max-h-0       transition-height duration-[1s]   overflow-hidden'
                                         : 'max-h-[300px] transition-height duration-[1.5s] overflow-hidden'
                                 }
                             >
@@ -110,6 +112,7 @@ const Sidebar = () => {
                         }
                     />
                 </div>
+
                 <div className={!(userRole === 'Moderator') && !(userRole === 'Admin') ? 'hidden' : ''}>
                     <SidebarItem
                         path="/statistics"
@@ -119,7 +122,7 @@ const Sidebar = () => {
                         onClick={() => setToggleSubMenu3(!toggleSubMenu3)}
                         firstElement={
                             <FontAwesomeIcon
-                                className="absolute top-[50%] translate-y-[-50%] right-[16px] text-[#ffffff]/[0.3]"
+                                className="right-[16px] absolute top-[50%] translate-y-[-50%] text-[#ffffff]/[0.3]"
                                 icon={toggleSubMenu3 ? faAngleDown : faAngleRight}
                             />
                         }
@@ -127,7 +130,7 @@ const Sidebar = () => {
                             <ul
                                 className={
                                     !toggleSubMenu3
-                                        ? 'max-h-0 transition-height duration-[1s] overflow-hidden'
+                                        ? 'max-h-0       transition-height duration-[1s]   overflow-hidden'
                                         : 'max-h-[300px] transition-height duration-[1.5s] overflow-hidden'
                                 }
                             >

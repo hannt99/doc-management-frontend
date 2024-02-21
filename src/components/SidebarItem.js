@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink } from 'react-router-dom';
 
-
 const SidebarItem = (props) => {
     return (
         <li
-            className="text-[1.4rem] text-[#9fa9ae] border-b-[1px] border-[#ffffff]/[0.05] hover:bg-[#46546c] hover:text-white cursor-pointer"
+            className="border-b-[1px] border-[#ffffff]/[0.05] hover:bg-[#46546c] text-[#9fa9ae] hover:text-white text-[1.4rem] cursor-pointer"
             onClick={props.onClick}
         >
             <div className="relative">
@@ -16,11 +15,11 @@ const SidebarItem = (props) => {
                             ? ({ isActive }) =>
                                   isActive
                                       ? 'flex items-center py-[18px] pl-[25px] bg-[#46546c] text-white hover:text-white pointer-events-none'
-                                      : 'flex items-center py-[18px] pl-[25px] pointer-events-none'
+                                      : 'flex items-center py-[18px] pl-[25px]                                                 pointer-events-none'
                             : ({ isActive }) =>
                                   isActive
                                       ? 'flex items-center py-[18px] pl-[25px] bg-[#46546c] text-white hover:text-[white]'
-                                      : 'flex items-center py-[18px] pl-[25px]' 
+                                      : 'flex items-center py-[18px] pl-[25px]'
                     }
                 >
                     <FontAwesomeIcon className="w-[18px] h-[18px] text-[1.8rem]" icon={props.icon} />

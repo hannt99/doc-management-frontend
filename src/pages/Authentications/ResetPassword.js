@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import InputField from '~/components/InputField';
 import { passwordValidator } from '~/utils/formValidation';
 import Loading from '~/components/Loading';
@@ -7,7 +7,6 @@ import * as authServices from '~/services/authServices';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
-
 
 const ResetPassword = () => {
     // Input state
@@ -42,15 +41,15 @@ const ResetPassword = () => {
 
         const data = {
             password: newPassword,
-            token: localStorage.getItem('resetPasswordToken')
+            token: localStorage.getItem('resetPasswordToken'),
         };
         const res = await authServices.resetPassword(data);
         if (res.code === 200) {
             localStorage.removeItem('resetPasswordToken');
             setLoading(false);
             successNotify(res.message, 1500);
-            
-            const delay = 1500;
+
+            const delay = 3000;
             const timeoutId = setTimeout(() => {
                 navigate('/sign-in');
             }, delay);
@@ -62,22 +61,24 @@ const ResetPassword = () => {
 
     return (
         <>
-            <div className="flex items-center justify-center w-screen h-screen bg-[#ebedef]">
-                <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way p-[36px] bg-white">
-                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
+            <div className="w-screen h-screen bg-[#ebedef] flex items-center justify-center">
+                <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way bg-white p-[36px]">
+                    <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="mb-16 text-center text-[2.0rem] font-medium text-[#9fa9ae]">Đặt lại mật khẩu</h1>
+                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] font-medium mb-16">Đặt lại mật khẩu</h1>
                     <form>
                         <InputField
                             placeholder="Mật khẩu mới"
                             name="password"
                             value={newPassword}
                             setValue={setNewPassword}
-                            onBlur={() => passwordValidator(newPassword, newPassword, setIsNewPasswordErr, setNewPasswordErrMsg)}
+                            onBlur={() =>
+                                passwordValidator(newPassword, newPassword, setIsNewPasswordErr, setNewPasswordErrMsg)
+                            }
                             className={isNewPasswordErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-[1.3rem] text-red-600">{newPasswordErrMsg.newPassword}</p>
+                        <p className="text-red-600 text-[1.3rem]">{newPasswordErrMsg.newPassword}</p>
                         <div className="mt-7">
                             <InputField
                                 placeholder="Xác nhận mật khẩu"
@@ -98,7 +99,7 @@ const ResetPassword = () => {
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full mt-12 rounded-md px-[16px] py-[8px] bg-[#321fdb] hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
+                            className="w-full rounded-md mt-12 bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
                         >
                             Đặt lại
                         </button>
@@ -106,7 +107,7 @@ const ResetPassword = () => {
                 </div>
             </div>
             {loading && (
-                <div className="fixed top-0 left-0 bottom-0 right-0 flex items-center justify-center bg-[#000000]/[.15] z-[999]">
+                <div className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[.15] z-[999] flex items-center justify-center">
                     <Loading />
                 </div>
             )}
