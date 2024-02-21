@@ -1,20 +1,18 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-
 const isAuthenticated = () => {
     const accessToken = localStorage.getItem('accessToken');
     return Boolean(accessToken);
 };
 
 const isUserRoleMember = () => {
-    const userRole = !localStorage.getItem('userRole') ? '' : localStorage.getItem('userRole');
-    return userRole === 'Member';
+    return localStorage.getItem('userRole') === 'Member';
 };
 
 const PublicRoutes = () => {
     const isAuth = isAuthenticated();
-    const isMember = isUserRoleMember();
     if (isAuth) {
+        const isMember = isUserRoleMember();
         const destination = isMember ? '/documents/documents-in' : '/dashboard';
         return <Navigate to={destination} />;
     }

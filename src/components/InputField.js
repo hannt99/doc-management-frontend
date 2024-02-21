@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { eye, eyeHover, eyeSlash, eyeSlashHover } from '~/custom-svg-icons/index';
 
-
 const InputField = (props) => {
     const [isHoveredEyeIcon, setIsHoveredEyeIcon] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -51,27 +50,28 @@ const InputField = (props) => {
                 onChange={(e) => props.setValue(e.target.value)}
                 autoComplete="on"
                 onBlur={props.onBlur}
-                className={props.className}
+                checked={props.checked}
                 rows={props.rows}
                 cols={props.cols}
                 min={props.min}
-                checked={props.checked}
+                className={props.className}
             />
             <div
                 onClick={toggleShowPassword}
-                className={
-                    props.name === 'password'
-                        ? 'absolute top-0 right-0 p-[7px] cursor-pointer'
-                        : 'hidden'
-                }
+                className={props.name === 'password' ? 'absolute top-0 right-0 p-[7px] cursor-pointer' : 'hidden'}
             >
                 <img
                     src={
-                        !showPassword ? isHoveredEyeIcon ? eyeHover : eye :
-                        isHoveredEyeIcon ? eyeSlashHover : eyeSlash
+                        !showPassword
+                            ? isHoveredEyeIcon
+                                ? eyeHover
+                                : eye
+                            : isHoveredEyeIcon
+                            ? eyeSlashHover
+                            : eyeSlash
                     }
                     alt="Eye Icon"
-                    title={!showPassword ? "Eye" : "Hidden"}
+                    title={!showPassword ? 'Eye' : 'Hidden'}
                     onMouseEnter={handleMouseEnterEyeIcon}
                     onMouseLeave={handleMouseLeaveEyeIcon}
                 />

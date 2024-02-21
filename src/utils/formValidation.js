@@ -1,7 +1,6 @@
 import isEmpty from 'validator/lib/isEmpty';
 import isEmail from 'validator/lib/isEmail';
 
-
 // Validate email
 export const emailValidator = (email, setIsEmailErr, setEmailErrMsg) => {
     const msg = {};
@@ -46,21 +45,38 @@ export const passwordValidator = (password, confirmPassword, setIsPasswordErr, s
 };
 
 // Validate name
-// export const fullNameValidator = (fullName, setIsFullNameErr, setFullNameErrMsg) => {
-//     const msg = {};
-//     if (isEmpty(fullName)) {
-//         msg.fullName = 'Tên không được để trống!';
-//         msg.comeNumber = 'Số đến không được để trống!';
-//         msg.code = 'Số ký hiệu không được để trống!';
-//         msg.sender = 'Nơi ban hành không được để trống!';
-//         setIsFullNameErr(true);
-//     } else {
-//         setIsFullNameErr(false);
-//     }
-//     setFullNameErrMsg(msg);
-//     if (Object.keys(msg).length > 0) return false;
-//     return true;
-// };
+export const fullNameValidator = (fullName, setIsFullNameErr, setFullNameErrMsg) => {
+    const msg = {};
+    if (isEmpty(fullName)) {
+        msg.fullName = 'Tên không được để trống!';
+        msg.comeNumber = 'Số đến không được để trống!';
+        msg.code = 'Số ký hiệu không được để trống!';
+        msg.sender = 'Nơi ban hành không được để trống!';
+        setIsFullNameErr(true);
+    } else {
+        setIsFullNameErr(false);
+    }
+    setFullNameErrMsg(msg);
+    if (Object.keys(msg).length > 0) return false;
+    return true;
+};
+
+export const dropListValidator = (value, setIsDropListErr, setDropListErrMsg) => {
+    const msg = {};
+    if (!value || value.length === 0) {
+        msg.department = 'Phòng ban không được để trống!';
+        msg.sender = 'Nơi ban hành không được để trống!';
+        msg.currLocation = 'Vị trí hiện tại không được để trống!';
+        msg.leader = 'Nhóm trưởng không được để trống!';
+        msg.assignTo = 'Người thực hiện không được để trống!';
+        setIsDropListErr(true);
+    } else {
+        setIsDropListErr(false);
+    }
+    setDropListErrMsg(msg);
+    if (Object.keys(msg).length > 0) return false;
+    return true;
+};
 
 // Validate date
 // export const disabledPastDate = () => {
@@ -87,23 +103,6 @@ export const passwordValidator = (password, confirmPassword, setIsPasswordErr, s
 //         setIsDateErr(false);
 //     }
 //     setDateErrMsg(msg);
-//     if (Object.keys(msg).length > 0) return false;
-//     return true;
-// };
-
-// export const dropListValidator = (value, setIsDropListErr, setDropListErrMsg) => {
-//     const msg = {};
-//     if (!value || value.length === 0) {
-//         msg.department = 'Phòng ban không được để trống!';
-//         msg.sender = 'Nơi ban hành không được để trống!';
-//         msg.currLocation = 'Vị trí hiện tại không được để trống!';
-//         msg.leader = 'Nhóm trưởng không được để trống!';
-//         msg.assignTo = 'Người thực hiện không được để trống!';
-//         setIsDropListErr(true);
-//     } else {
-//         setIsDropListErr(false);
-//     }
-//     setDropListErrMsg(msg);
 //     if (Object.keys(msg).length > 0) return false;
 //     return true;
 // };

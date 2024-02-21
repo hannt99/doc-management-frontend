@@ -1,7 +1,7 @@
 // JSDoc comments =>
-/** 
- * @type {import('tailwindcss').Config} 
-*/
+/**
+ * @type {import('tailwindcss').Config}
+ */
 // => Specify the type of the exported configuration object.
 // It's indicating that the exported object should conform to the type defined in the tailwindcss module's Config type.
 // This helps editors and tools (that support TypeScript or type checking via JSDoc comments) understand the expected structure of the exported configuration.
