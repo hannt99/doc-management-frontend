@@ -227,16 +227,16 @@ function App() {
                                     }
                                 />
                                 <Route
-                                    path="/documents/documents-in/edit/:id"
+                                    path="/documents/documents-in/create"
                                     element={
                                         userRole === 'Moderator' || userRole === 'Admin' ? (
                                             <DefaultLayout socket={socket}>
                                                 <CreateDocument
+                                                    title="Thêm văn bản đến mới"
                                                     inputLabel="đến"
-                                                    title="Sửa văn bản đến"
                                                     path="documents-in"
-                                                    socket={socket}
                                                     documentIn={true}
+                                                    socket={socket}
                                                 />
                                             </DefaultLayout>
                                         ) : (
@@ -245,16 +245,16 @@ function App() {
                                     }
                                 />
                                 <Route
-                                    path="/documents/documents-in/create"
+                                    path="/documents/documents-in/edit/:id"
                                     element={
                                         userRole === 'Moderator' || userRole === 'Admin' ? (
                                             <DefaultLayout socket={socket}>
                                                 <CreateDocument
+                                                    title="Sửa văn bản đến"
                                                     inputLabel="đến"
-                                                    title="Thêm văn bản đến mới"
                                                     path="documents-in"
-                                                    socket={socket}
                                                     documentIn={true}
+                                                    socket={socket}
                                                 />
                                             </DefaultLayout>
                                         ) : (
