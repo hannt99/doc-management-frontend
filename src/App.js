@@ -5,7 +5,7 @@ import { SignIn, ForgotPassword, ResetPassword } from '~/pages/Authentications/i
 import DefaultLayout from '~/layouts/DefaultLayout';
 import { Department, CreateDepartment } from '~/pages/Departments/index.js';
 import { User, CreateUser, RequestChange } from '~/pages/Users/index.js';
-import { DocumentIn, /*DocumentOut, DocumentDetail,*/ CreateDocument } from '~/pages/Documents';
+import { DocumentIn, /*DocumentOut, DocumentDetail,*/ CreateDocument } from '~/pages/Documents/index.js';
 
 import * as authServices from '~/services/authServices';
 import { jwtDecode } from 'jwt-decode';
@@ -227,15 +227,15 @@ function App() {
                                     }
                                 />
                                 <Route
-                                    path="/documents/documents-in/create"
+                                    path="/documents/documents-in/edit/:id"
                                     element={
-                                        userRole === 'Admin' || userRole === 'Moderator' ? (
+                                        userRole === 'Moderator' || userRole === 'Admin' ? (
                                             <DefaultLayout socket={socket}>
                                                 <CreateDocument
-                                                    socket={socket}
-                                                    path="documents-in"
-                                                    title="Thêm văn bản đến mới"
                                                     inputLabel="đến"
+                                                    title="Sửa văn bản đến"
+                                                    path="documents-in"
+                                                    socket={socket}
                                                     documentIn={true}
                                                 />
                                             </DefaultLayout>
@@ -245,15 +245,15 @@ function App() {
                                     }
                                 />
                                 <Route
-                                    path="/documents/documents-in/edit/:id"
+                                    path="/documents/documents-in/create"
                                     element={
-                                        userRole === 'Admin' || userRole === 'Moderator' ? (
+                                        userRole === 'Moderator' || userRole === 'Admin' ? (
                                             <DefaultLayout socket={socket}>
                                                 <CreateDocument
-                                                    socket={socket}
-                                                    path="documents-in"
-                                                    title="Sửa văn bản đến"
                                                     inputLabel="đến"
+                                                    title="Thêm văn bản đến mới"
+                                                    path="documents-in"
+                                                    socket={socket}
                                                     documentIn={true}
                                                 />
                                             </DefaultLayout>

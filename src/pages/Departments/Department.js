@@ -43,26 +43,12 @@ const Department = () => {
     const [activeId, setActiveId] = useState('');
     const [isActived, setIsActived] = useState(false);
 
-    const [searchValue, setSearchValue] = useState('');
-    const debouncedValue = useDebounce(searchValue, 300);
-
     const [deleteId, setDeleteId] = useState('');
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState('');
 
-    // Go to next page
-    const handleNextPage = () => {
-        setPage(page + 1);
-        setRowStart(rowStart + +limit);
-        setRowEnd(rowEnd + +limit);
-    };
-
-    // Back to previous page
-    const handlePrevPage = () => {
-        setPage(page - 1);
-        setRowStart(rowStart - +limit);
-        setRowEnd(rowEnd - +limit);
-    };
+    const [searchValue, setSearchValue] = useState('');
+    const debouncedValue = useDebounce(searchValue, 300);
 
     // Get department from server
     useEffect(() => {
@@ -70,9 +56,9 @@ const Department = () => {
             setLoading(true);
             const res = await departmentServices.getAllDepartment(page, limit, debouncedValue);
             if (res.code === 200) {
-                setLoading(false);
                 setAllDepartments(res.allDepartments); // all departments
                 setDepartmentLists(res.data); // departments with filter and pagination
+                setLoading(false);
             } else {
                 setLoading(false);
             }
@@ -91,6 +77,20 @@ const Department = () => {
             return;
         }
     }, [debouncedValue, limit]);
+
+    // Go to next page
+    const handleNextPage = () => {
+        setPage(page + 1);
+        setRowStart(rowStart + +limit);
+        setRowEnd(rowEnd + +limit);
+    };
+
+    // Back to previous page
+    const handlePrevPage = () => {
+        setPage(page - 1);
+        setRowStart(rowStart - +limit);
+        setRowEnd(rowEnd - +limit);
+    };
 
     // Activate department function
     useEffect(() => {
@@ -146,12 +146,12 @@ const Department = () => {
         if (deleteId) {
             const res = await departmentServices.deleteDepartmentById(deleteId);
             if (res.code === 200) {
-                successNotify(res.message, 1500);
+                setDeleteId('');
                 setIsSave((isSave) => !isSave);
+                successNotify(res.message, 1500);
             } else {
                 errorNotify(res, 1500);
             }
-            setDeleteId('');
             setConfirmationMessage('');
         } else {
             const data = {
@@ -159,12 +159,12 @@ const Department = () => {
             };
             const res = await departmentServices.deleteManyDepartment(data);
             if (res.code === 200) {
-                successNotify(res.message, 1500);
                 setChecked([]);
+                setIsSave((isSave) => !isSave);
                 setPage(1);
                 setRowStart(1);
                 setRowEnd(0);
-                setIsSave((isSave) => !isSave);
+                successNotify(res.message, 1500);
             } else {
                 errorNotify(res, 1500);
             }
@@ -195,7 +195,7 @@ const Department = () => {
                     </div>
                 </div>
             </div>
-            <div className="shadow-4Way mb-[12px] md:mb-0 border border-solid border-[#cccccc] bg-[#f7f7f7] p-[16px] flex flex-col md:flex-row items-center md:justify-between">
+            <div className="mb-[12px] md:mb-0 shadow-4Way border border-solid border-[#cccccc] bg-[#f7f7f7] p-[16px] flex flex-col md:flex-row items-center md:justify-between">
                 <h1 className="text-[1.8rem] md:text-[2.4rem] font-bold">Danh sách phòng ban</h1>
                 <div className="mt-3 md:mt-0 flex md:flex-col lg:flex-row items-center gap-5">
                     <button

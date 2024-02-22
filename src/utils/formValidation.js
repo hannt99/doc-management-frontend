@@ -79,30 +79,30 @@ export const dropListValidator = (value, setIsDropListErr, setDropListErrMsg) =>
 };
 
 // Validate date
-// export const disabledPastDate = () => {
-//     let today, dd, mm, yyyy, hh, minu;
-//     today = new Date();
-//     dd = ('0' + today.getDate()).slice(-2);
-//     mm = ('0' + (today.getMonth() + 1)).slice(-2);
-//     yyyy = today.getFullYear();
-//     hh = ('0' + today.getHours()).slice(-2);
-//     minu = ('0' + today.getMinutes()).slice(-2);
-//     return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minu;
-// };
+export const disabledPastDate = () => {
+    let today, dd, mm, yyyy, hh, minu;
+    today = new Date();
+    dd = ('0' + today.getDate()).slice(-2);
+    mm = ('0' + (today.getMonth() + 1)).slice(-2);
+    yyyy = today.getFullYear();
+    hh = ('0' + today.getHours()).slice(-2);
+    minu = ('0' + today.getMinutes()).slice(-2);
+    return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minu;
+};
 
-// export const dateValidator = (date, setIsDateErr, setDateErrMsg) => {
-//     const msg = {};
-//     if (isEmpty(date)) {
-//         msg.date = 'Thời gian không được để trống!';
-//         msg.issuedDate = 'Ngày ban hành không được để trống!';
-//         msg.inDate = 'Ngày đến không được để trống!';
-//         msg.dueDate = 'Ngày đến hạn không được để trống!';
-//         msg.outDate = 'Ngày đi không được để trống!';
-//         setIsDateErr(true);
-//     } else {
-//         setIsDateErr(false);
-//     }
-//     setDateErrMsg(msg);
-//     if (Object.keys(msg).length > 0) return false;
-//     return true;
-// };
+export const dateValidator = (date, setIsDateErr, setDateErrMsg) => {
+    const msg = {};
+    if (isEmpty(date)) {
+        msg.date = 'Thời gian không được để trống!';
+        msg.issuedDate = 'Ngày ban hành không được để trống!';
+        msg.inDate = 'Ngày đến không được để trống!';
+        msg.dueDate = 'Ngày đến hạn không được để trống!';
+        msg.outDate = 'Ngày đi không được để trống!';
+        setIsDateErr(true);
+    } else {
+        setIsDateErr(false);
+    }
+    setDateErrMsg(msg);
+    if (Object.keys(msg).length > 0) return false;
+    return true;
+};

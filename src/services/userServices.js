@@ -91,9 +91,7 @@ export const changeAvatar = async (data) => {
 // Remove user avatar function
 export const removeAvatar = async (fileName) => {
     try {
-        console.log('here!');
         const res = await httpRequest.delete(`/user/file/${fileName}`);
-        console.log('res:', res);
         return res.data;
     } catch (error) {
         console.log(error);
