@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import FormData from 'form-data';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { UserInfoContext } from '~/App';
 import * as authServices from '~/services/authServices';
 import * as userServices from '~/services/userServices';
-import ProfileForm from '~/components/Form/ProfileForm';
 // import { useFetchTasks } from '~/hooks';
+import { UserInfoContext } from '~/App';
+import ProfileForm from '~/components/Form/ProfileForm';
+import FormData from 'form-data';
 import { formatVNDate } from '~/utils/formatDateTime';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 import customLog from '~/utils/customLog';
@@ -27,6 +27,17 @@ const Profile = ({ socket }) => {
     // const allTasks = useFetchTasks();
 
     const [isSave, setIsSave] = useState(false);
+
+    // Get current user data
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await authServices.getCurrUser();
+            setCurrUser(res);
+            setIsReqChangeInfo(res.isReqChangeInfo);
+        };
+
+        fetchApi();
+    }, [isChangeUserInfo, isSave]);
 
     // Change avatar function
     const changeAvatar = async (e) => {
@@ -62,17 +73,6 @@ const Profile = ({ socket }) => {
             errorNotify(res, 1500);
         }
     };
-
-    // Get current user data
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await authServices.getCurrUser();
-            setCurrUser(res);
-            setIsReqChangeInfo(res.isReqChangeInfo);
-        };
-
-        fetchApi();
-    }, [isChangeUserInfo, isSave]);
 
     // Get all complete tasks quantity
     const getCompleteTaskQty = () => {
