@@ -1,50 +1,105 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import FormData from 'form-data';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFloppyDisk, faXmark, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle, faXmark, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
+
 import InputField from '~/components/InputField';
 import DropList from '~/components/DropList';
-import FileInput from '~/components/FileInput';
-import * as documentServices from '~/services/documentServices';
-import * as taskServices from '~/services/taskServices';
-import * as notificationServices from '~/services/notificationServices';
-import * as taskTypeServices from '~/services/taskTypeServices';
-import * as documentTypeServices from '~/services/documentTypeServices';
-import * as senderServices from '~/services/senderServices';
-import { fullNameValidator, dateValidator, dropListValidator } from '~/utils/formValidation';
-import { successNotify, errorNotify } from '~/components/ToastMessage';
-import { useFetchDepartments, useFetchUsers } from '~/hooks';
-import Loading from '~/components/Loading';
 import SwitchButton from '~/components/SwitchButton';
-import { disabledPastDate } from '~/utils/formValidation';
+import FileInput from '~/components/FileInput';
+import { fullNameValidator, dropListValidator, dateValidator, disabledPastDate } from '~/utils/formValidation';
 
-const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
-    const [addSender, setAddSender] = useState(false);
-    const [allSenders, setAllSenders] = useState([]);
-    const [newSender, setNewSender] = useState('');
+import FormData from 'form-data';
 
-    const [addDocType, setAddDocType] = useState(false);
-    const [addTaskType, setAddTaskType] = useState(false);
-    const [isAssigned, setAssigned] = useState(false);
+import { useFetchDepartments, useFetchUsers } from '~/hooks';
+import * as documentTypeServices from '~/services/documentTypeServices';
+import * as documentServices from '~/services/documentServices';
+import * as taskTypeServices from '~/services/taskTypeServices';
+import * as taskServices from '~/services/taskServices';
+import * as senderServices from '~/services/senderServices';
+import * as notificationServices from '~/services/notificationServices';
+
+import Loading from '~/components/Loading';
+import { successNotify, errorNotify } from '~/components/ToastMessage';
+
+const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     const [loading, setLoading] = useState(false);
     const [isSave, setIsSave] = useState(false);
+
     // Input state
     const [fullName, setFullName] = useState('');
     const [number, setNumber] = useState('');
     const [sendDate, setSendDate] = useState('');
+    const [code, setCode] = useState('');
+
     const [allDocTypes, setAllDocTypes] = useState([]);
     const [type, setType] = useState('');
+    const [addDocType, setAddDocType] = useState(false);
     const [newDocType, setNewDocType] = useState('');
-    const [code, setCode] = useState('');
-    const [sender, setSender] = useState('');
+    // Handle add new doc type
+    const handleAddNewDocType = async () => {
+        const data = {
+            documentTypeName: newDocType,
+        };
+        const res = await documentTypeServices.createDocumentType(data);
+        if (res.code === 200) {
+            setNewDocType('');
+            setAddDocType(false);
+            setIsSave((isSave) => !isSave);
+            successNotify(res.message, 1500);
+        } else {
+            setLoading(false);
+            errorNotify(res, 1500);
+        }
+    };
+
     const [issuedDate, setIssuedDate] = useState('');
+
+    const [allSenders, setAllSenders] = useState([]);
+    const [sender, setSender] = useState('');
+    const [addSender, setAddSender] = useState(false);
+    const [newSender, setNewSender] = useState('');
+    // Handle add new sender
+    const handleAddNewSender = async () => {
+        const data = {
+            sender: newSender,
+        };
+        const res = await senderServices.createSender(data);
+        if (res.code === 200) {
+            setNewSender('');
+            setAddSender(false);
+            setIsSave((isSave) => !isSave);
+            successNotify(res.message, 1500);
+        } else {
+            setLoading(false);
+            errorNotify(res, 1500);
+        }
+    };
+
+    const levelOptions = ['Bình thường', 'Ưu tiên', 'Khẩn cấp'];
     const [level, setLevel] = useState('Bình thường');
-    const [note, setNote] = useState('');
+    const departments = useFetchDepartments({ isActived: false });
     const [currentLocation, setCurrentLocation] = useState('');
     const [attachFiles, setAttachFiles] = useState([]);
-    const [isHaveTask, setIsHaveTask] = useState(true);
+    const [note, setNote] = useState('');
+
+    // Input validation state
+    const [isFullNameErr, setIsFullNameErr] = useState(false);
+    const [fullNameErrMsg, setFullNameErrMsg] = useState({});
+    const [isNumberErr, setIsNumberErr] = useState(false);
+    const [numberErrMsg, setNumberErrMsg] = useState({});
+    const [isSendDateErr, setIsSendDateErr] = useState(false);
+    const [sendDateErrMsg, setSendDateErrMsg] = useState({});
+    const [isCodeErr, setIsCodeErr] = useState(false);
+    const [codeErrMsg, setCodeErrMsg] = useState({});
+    const [isIssuedDateErr, setIsIssuedDateErr] = useState(false);
+    const [issuedDateErrMsg, setIssuedDateErrMsg] = useState({});
+    const [isSenderErr, setIsSenderErr] = useState(false);
+    const [senderErrMsg, setSenderErrMsg] = useState({});
+    const [isCurrLocationErr, setIsCurrLocationErr] = useState(false);
+    const [currLocationErrMsg, setCurrLocationErrMsg] = useState({});
+
     // Task input state
     const [leader, setLeader] = useState();
     const [assignTo, setAssignTo] = useState([]);
@@ -54,35 +109,25 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
     const [taskType, setTaskType] = useState('');
     const [newTaskType, setNewTaskType] = useState('');
     const [taskDesc, setTaskDesc] = useState('');
-    // Input validation state
-    const [fullNameErrMsg, setFullNameErrMsg] = useState({});
-    const [isFullNameErr, setIsFullNameErr] = useState(false);
-    const [numberErrMsg, setNumberErrMsg] = useState({});
-    const [isNumberErr, setIsNumberErr] = useState(false);
-    const [sendDateErrMsg, setSendDateErrMsg] = useState({});
-    const [isSendDateErr, setIsSendDateErr] = useState(false);
-    const [codeErrMsg, setCodeErrMsg] = useState({});
-    const [isCodeErr, setIsCodeErr] = useState(false);
-    const [senderErrMsg, setSenderErrMsg] = useState({});
-    const [isSenderErr, setIsSenderErr] = useState(false);
-    const [issuedDateErrMsg, setIssuedDateErrMsg] = useState({});
-    const [isIssuedDateErr, setIsIssuedDateErr] = useState(false);
-    const [currLocationErrMsg, setCurrLocationErrMsg] = useState({});
-    const [isCurrLocationErr, setIsCurrLocationErr] = useState(false);
-    const [deadlineErrMsg, setDeadlineErrMsg] = useState({});
-    const [isDeadlineErr, setIsDeadlineErr] = useState(false);
-    const [taskNameErrMsg, setTaskNameErrMsg] = useState({});
-    const [isTaskNameErr, setIsTaskNameErr] = useState(false);
-    const [leaderErrMsg, setLeaderErrMsg] = useState({});
-    const [isLeaderErr, setIsLeaderErr] = useState(false);
-    const [assignToErrMsg, setAssignToErrMsg] = useState({});
-    const [isAssignToErr, setIsAssignToErr] = useState(false);
 
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const departments = useFetchDepartments({ isActived: false });
+    // **..
+    const [addTaskType, setAddTaskType] = useState(false);
+    const [isHaveTask, setIsHaveTask] = useState(true);
+    const [isAssigned, setAssigned] = useState(false);
     const allUsers = useFetchUsers().publicUsers.filter((item) => item?.role === 'Member');
-    const levelOptions = ['Bình thường', 'Ưu tiên', 'Khẩn cấp'];
+
+    // Task input validation state
+    const [isTaskNameErr, setIsTaskNameErr] = useState(false);
+    const [taskNameErrMsg, setTaskNameErrMsg] = useState({});
+    const [isDeadlineErr, setIsDeadlineErr] = useState(false);
+    const [deadlineErrMsg, setDeadlineErrMsg] = useState({});
+    const [isAssignToErr, setIsAssignToErr] = useState(false);
+    const [assignToErrMsg, setAssignToErrMsg] = useState({});
+    const [isLeaderErr, setIsLeaderErr] = useState(false);
+    const [leaderErrMsg, setLeaderErrMsg] = useState({});
+
+    const { id } = useParams();
+    const navigate = useNavigate();
 
     // React-select style
     const selectStyles = {
@@ -138,40 +183,6 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
             backgroundPosition: 'calc(100% - 12px) center !important',
             background: `url("data:image/svg+xml,<svg height='20' width='20' viewBox='0 0 20 20' aria-hidden='true' class='svg' xmlns='http://www.w3.org/2000/svg'><path d='M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z'></path></svg>") no-repeat`,
         }),
-    };
-
-    // Handle add new doc type
-    const handleAddNewDocType = async () => {
-        const data = {
-            documentTypeName: newDocType,
-        };
-        const res = await documentTypeServices.createDocumentType(data);
-        if (res.code === 200) {
-            setNewDocType('');
-            setAddDocType(false);
-            setIsSave((isSave) => !isSave);
-            successNotify(res.message);
-        } else {
-            setLoading(false);
-            errorNotify(res);
-        }
-    };
-
-    // Handle add new sender
-    const handleAddNewSender = async () => {
-        const data = {
-            sender: newSender,
-        };
-        const res = await senderServices.createSender(data);
-        if (res.code === 200) {
-            setNewSender('');
-            setAddSender(false);
-            setIsSave((isSave) => !isSave);
-            successNotify(res.message);
-        } else {
-            setLoading(false);
-            errorNotify(res);
-        }
     };
 
     // Handle add new task type
@@ -401,27 +412,27 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                             Tên văn bản: <span className="text-red-600">*</span>
                         </label>
                         <InputField
-                            id="docName"
-                            className={isFullNameErr ? 'invalid' : 'default'}
                             placeholder="Tên văn bản"
+                            id="docName"
                             value={fullName}
                             setValue={setFullName}
                             onBlur={() => fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg)}
+                            className={isFullNameErr ? 'invalid' : 'default'}
                         />
                         <p className="text-red-600 text-[1.3rem]">{fullNameErrMsg.fullName}</p>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-6 mt-7">
+                    <div className="mt-7 flex flex-col md:flex-row gap-6">
                         <div className="flex-1">
                             <label className="font-bold">
                                 Số {inputLabel}: <span className="text-red-600">*</span>
                             </label>
                             <InputField
-                                id="number"
-                                className={isNumberErr ? 'invalid' : 'default'}
                                 placeholder={`Số ${inputLabel}`}
+                                id="number"
                                 value={number}
                                 setValue={setNumber}
                                 onBlur={() => fullNameValidator(number, setIsNumberErr, setNumberErrMsg)}
+                                className={isNumberErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{numberErrMsg.comeNumber}</p>
                         </div>
@@ -431,26 +442,26 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                             </label>
                             <InputField
                                 name="date"
-                                className={isSendDateErr ? 'invalid' : 'default'}
                                 value={sendDate}
                                 setValue={setSendDate}
                                 onBlur={() => dateValidator(sendDate, setIsSendDateErr, setSendDateErrMsg)}
+                                className={isSendDateErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{sendDateErrMsg.inDate}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-6 mt-7">
+                    <div className="mt-7 flex flex-col md:flex-row gap-6">
                         <div className="flex-1">
                             <label className="font-bold">
                                 Số ký hiệu: <span className="text-red-600">*</span>
                             </label>
                             <InputField
-                                id="docCode"
-                                className={isCodeErr ? 'invalid' : 'default'}
                                 placeholder="Số ký hiệu"
+                                id="docCode"
                                 value={code}
                                 setValue={setCode}
                                 onBlur={() => fullNameValidator(code, setIsCodeErr, setCodeErrMsg)}
+                                className={isCodeErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{codeErrMsg.code}</p>
                         </div>
@@ -460,8 +471,8 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                 {!addDocType ? (
                                     <div className="flex-1">
                                         <DropList
-                                            selectedValue={type}
                                             options={allDocTypes}
+                                            selectedValue={type}
                                             setValue={setType}
                                             setId={() => undefined}
                                         />
@@ -469,11 +480,11 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                 ) : (
                                     <div className="flex-1">
                                         <InputField
-                                            id="docType"
-                                            className="default"
                                             placeholder="Loại văn bản"
+                                            id="docType"
                                             value={newDocType}
                                             setValue={setNewDocType}
+                                            className="default"
                                         />
                                     </div>
                                 )}
@@ -486,23 +497,23 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                     </div>
                                 ) : (
                                     <div onClick={handleAddNewDocType} className="text-[2rem] cursor-pointer">
-                                        <FontAwesomeIcon icon={faPlusCircle} />
+                                        <FontAwesomeIcon className="text-[blue]" icon={faPlusCircle} />
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-6 mt-7">
+                    <div className="mt-7 flex flex-col md:flex-row gap-6">
                         <div className="flex-1">
                             <label className="font-bold">
                                 Ngày ban hành: <span className="text-red-600">*</span>
                             </label>
                             <InputField
                                 name="date"
-                                className={isIssuedDateErr ? 'invalid' : 'default'}
                                 value={issuedDate}
                                 setValue={setIssuedDate}
                                 onBlur={() => dateValidator(issuedDate, setIsIssuedDateErr, setIssuedDateErrMsg)}
+                                className={isIssuedDateErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{issuedDateErrMsg.issuedDate}</p>
                         </div>
@@ -514,22 +525,22 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                 {!addSender ? (
                                     <div className="flex-1">
                                         <DropList
-                                            isErr={isSenderErr}
-                                            selectedValue={sender}
                                             options={allSenders}
+                                            selectedValue={sender}
                                             setValue={setSender}
                                             setId={() => undefined}
+                                            isErr={isSenderErr}
                                             onBlur={() => dropListValidator(sender, setIsSenderErr, setSenderErrMsg)}
                                         />
                                     </div>
                                 ) : (
                                     <div className="flex-1">
                                         <InputField
-                                            id="sender"
-                                            className={isSenderErr ? 'invalid' : 'default'}
                                             placeholder="Nơi ban hành"
+                                            id="sender"
                                             value={newSender}
                                             setValue={setNewSender}
+                                            className={isSenderErr ? 'invalid' : 'default'}
                                         />
                                     </div>
                                 )}
@@ -542,7 +553,7 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                     </div>
                                 ) : (
                                     <div onClick={handleAddNewSender} className="text-[2rem] cursor-pointer">
-                                        <FontAwesomeIcon icon={faPlusCircle} />
+                                        <FontAwesomeIcon className="text-[blue]" icon={faPlusCircle} />
                                     </div>
                                 )}
                             </div>
@@ -553,8 +564,8 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                         <div className="flex-1">
                             <label className="font-bold">Mức độ:</label>
                             <DropList
-                                selectedValue={level}
                                 options={levelOptions}
+                                selectedValue={level}
                                 setValue={setLevel}
                                 setId={() => undefined}
                             />
@@ -564,11 +575,11 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                                 Ví trí hiện tại: <span className="text-red-600">*</span>
                             </label>
                             <DropList
-                                isErr={isCurrLocationErr}
-                                selectedValue={currentLocation}
                                 options={departments}
+                                selectedValue={currentLocation}
                                 setValue={setCurrentLocation}
                                 setId={() => undefined}
+                                isErr={isCurrLocationErr}
                                 onBlur={() =>
                                     dropListValidator(currentLocation, setIsCurrLocationErr, setCurrLocationErrMsg)
                                 }
@@ -713,24 +724,24 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                         <label className="font-bold">Trích yếu:</label>
                         <InputField
                             textarea
-                            className="default textarea"
-                            rows="6"
-                            cols="50"
                             placeholder="Trích yếu"
+                            className="default textarea"
                             value={note}
                             setValue={setNote}
+                            rows="6"
+                            cols="50"
                         />
                     </div>
-                    <div className="block md:flex items-center gap-5 mt-12">
+                    <div className="mt-12 block md:flex items-center gap-5">
                         <button
                             onClick={handleSubmit}
-                            className="w-full md:w-fit text-center text-[white] bg-[#321fdb] px-[16px] py-[8px] rounded-md hover:bg-[#1b2e4b] transition-all duration-[1s]"
+                            className="w-full md:w-fit rounded-md bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] text-center transition-all duration-[1s]"
                         >
                             <FontAwesomeIcon icon={faFloppyDisk} /> Lưu thông tin
                         </button>
                         <NavLink
                             to={`/documents/${path}`}
-                            className="block w-full md:w-fit text-center text-[white] bg-red-600 mt-4 md:mt-0 px-[16px] py-[8px] rounded-md hover:bg-[#1b2e4b] transition-all duration-[1s]"
+                            className="block mt-4 md:mt-0 w-full md:w-fit rounded-md bg-red-600 hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] text-center transition-all duration-[1s]"
                         >
                             <FontAwesomeIcon icon={faXmark} /> Hủy bỏ
                         </NavLink>
@@ -738,7 +749,7 @@ const CreateDocument = ({ title, inputLabel, documentIn, path, socket }) => {
                 </form>
             </div>
             {loading && (
-                <div className="fixed top-0 left-0 bottom-0 right-0 flex items-center justify-center bg-[#000000]/[.15] z-[999]">
+                <div className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[.15] z-[999] flex items-center justify-center">
                     <Loading />
                 </div>
             )}

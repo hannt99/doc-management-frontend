@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { useFetchDepartments } from '~/hooks';
-import InputField from '~/components/InputField';
-import { fullNameValidator, emailValidator, dropListValidator } from '~/utils/formValidation';
-import DropList from '~/components/DropList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
-import Loading from '~/components/Loading';
+
+import InputField from '~/components/InputField';
+import DropList from '~/components/DropList';
+import { fullNameValidator, emailValidator, dropListValidator } from '~/utils/formValidation';
+
+import { useFetchDepartments } from '~/hooks';
 import * as userServices from '~/services/userServices';
+
+import Loading from '~/components/Loading';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const CreateUser = ({ title }) => {
+    const [loading, setLoading] = useState(false);
+
     // Input state
     const [fullName, setFullName] = useState('');
     const genderList = ['Nam', 'Nữ'];
@@ -28,8 +33,6 @@ const CreateUser = ({ title }) => {
     const [emailErrMsg, setEmailErrMsg] = useState({});
     const [isDepartmentErr, setIsDepartmentErr] = useState(false);
     const [departmentErrMsg, setDepartmentErrMsg] = useState({});
-
-    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 

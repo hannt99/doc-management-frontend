@@ -61,14 +61,15 @@ export const fullNameValidator = (fullName, setIsFullNameErr, setFullNameErrMsg)
     return true;
 };
 
+// Validate drop list
 export const dropListValidator = (value, setIsDropListErr, setDropListErrMsg) => {
     const msg = {};
     if (!value || value.length === 0) {
         msg.department = 'Phòng ban không được để trống!';
         msg.sender = 'Nơi ban hành không được để trống!';
         msg.currLocation = 'Vị trí hiện tại không được để trống!';
-        msg.leader = 'Nhóm trưởng không được để trống!';
         msg.assignTo = 'Người thực hiện không được để trống!';
+        msg.leader = 'Nhóm trưởng không được để trống!';
         setIsDropListErr(true);
     } else {
         setIsDropListErr(false);
@@ -79,17 +80,6 @@ export const dropListValidator = (value, setIsDropListErr, setDropListErrMsg) =>
 };
 
 // Validate date
-export const disabledPastDate = () => {
-    let today, dd, mm, yyyy, hh, minu;
-    today = new Date();
-    dd = ('0' + today.getDate()).slice(-2);
-    mm = ('0' + (today.getMonth() + 1)).slice(-2);
-    yyyy = today.getFullYear();
-    hh = ('0' + today.getHours()).slice(-2);
-    minu = ('0' + today.getMinutes()).slice(-2);
-    return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minu;
-};
-
 export const dateValidator = (date, setIsDateErr, setDateErrMsg) => {
     const msg = {};
     if (isEmpty(date)) {
@@ -105,4 +95,15 @@ export const dateValidator = (date, setIsDateErr, setDateErrMsg) => {
     setDateErrMsg(msg);
     if (Object.keys(msg).length > 0) return false;
     return true;
+};
+
+export const disabledPastDate = () => {
+    let today, yyyy, mm, dd, hh, minu;
+    today = new Date();
+    yyyy = today.getFullYear();
+    mm = ('0' + (today.getMonth() + 1)).slice(-2);
+    dd = ('0' + today.getDate()).slice(-2);
+    hh = ('0' + today.getHours()).slice(-2);
+    minu = ('0' + today.getMinutes()).slice(-2);
+    return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minu;
 };
