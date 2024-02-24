@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as departmentServices from '~/services/departmentServices';
 
-const useFetchDepartments = ({ isActived }) => {
+const useFetchDepartments = ({ isActived }) => { // except "isActived"
     const [allDepartments, setAllDepartments] = useState([]);
 
     useEffect(() => {

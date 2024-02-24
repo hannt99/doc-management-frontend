@@ -53,6 +53,10 @@ body {
     padding: 8px 45px 8px 16px;
 }
 
+.droplistInvalid > .css-13cymwt-control {
+    border-color: red;
+}
+
 .md-page-btn {
     width: 35px;
     height: 35px;
@@ -103,10 +107,6 @@ body {
 .status.warning {
     background-color: #f7bb07;
 }
-
-/* .droplistInvalid > .css-13cymwt-control {
-    border-color: red;
-} */
 
 /* .block-ellipsis {
     display: block;

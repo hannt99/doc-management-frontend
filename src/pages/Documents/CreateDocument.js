@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faXmark, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
-import Select from 'react-select';
 
 import InputField from '~/components/InputField';
-import DropList from '~/components/DropList';
-import SwitchButton from '~/components/SwitchButton';
 import FileInput from '~/components/FileInput';
+import DropList from '~/components/DropList';
+import Select from 'react-select';
+import SwitchButton from '~/components/SwitchButton';
 import { fullNameValidator, dropListValidator, dateValidator, disabledPastDate } from '~/utils/formValidation';
 
 import FormData from 'form-data';
@@ -34,6 +34,20 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     const [code, setCode] = useState('');
 
     const [allDocTypes, setAllDocTypes] = useState([]);
+    // Get all doc types
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await documentTypeServices.getAllDocumentType();
+            if (res.code === 200) {
+                const typeName = res?.data?.map((item) => item?.documentTypeName);
+                setAllDocTypes(typeName);
+            } else {
+                console.log(res);
+            }
+        };
+
+        fetchApi();
+    }, [isSave]);
     const [type, setType] = useState('');
     const [addDocType, setAddDocType] = useState(false);
     const [newDocType, setNewDocType] = useState('');
@@ -57,6 +71,20 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     const [issuedDate, setIssuedDate] = useState('');
 
     const [allSenders, setAllSenders] = useState([]);
+    // Get all senders
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await senderServices.getAllSenders();
+            if (res.code === 200) {
+                const sender = res?.data?.map((item) => item?.sender);
+                setAllSenders(sender);
+            } else {
+                console.log(res);
+            }
+        };
+
+        fetchApi();
+    }, [isSave]);
     const [sender, setSender] = useState('');
     const [addSender, setAddSender] = useState(false);
     const [newSender, setNewSender] = useState('');
@@ -79,10 +107,13 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
 
     const levelOptions = ['Bình thường', 'Ưu tiên', 'Khẩn cấp'];
     const [level, setLevel] = useState('Bình thường');
+
     const departments = useFetchDepartments({ isActived: false });
     const [currentLocation, setCurrentLocation] = useState('');
+
     const [attachFiles, setAttachFiles] = useState([]);
     const [note, setNote] = useState('');
+    const [isHaveTask, setIsHaveTask] = useState(true);
 
     // Input validation state
     const [isFullNameErr, setIsFullNameErr] = useState(false);
@@ -100,21 +131,79 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     const [isCurrLocationErr, setIsCurrLocationErr] = useState(false);
     const [currLocationErrMsg, setCurrLocationErrMsg] = useState({});
 
-    // Task input state
-    const [leader, setLeader] = useState();
-    const [assignTo, setAssignTo] = useState([]);
-    const [deadline, setDeadline] = useState('');
-    const [taskName, setTaskName] = useState('');
-    const [allTaskTypes, setAllTaskTypes] = useState([]);
-    const [taskType, setTaskType] = useState('');
-    const [newTaskType, setNewTaskType] = useState('');
-    const [taskDesc, setTaskDesc] = useState('');
+    const { id } = useParams();
+    // Get available document data when edit document
+    useEffect(() => {
+        if (!id) return;
 
-    // **..
-    const [addTaskType, setAddTaskType] = useState(false);
-    const [isHaveTask, setIsHaveTask] = useState(true);
+        const fetchApi = async () => {
+            const res = await documentServices.getDocumentById(id);
+            setFullName(res.data.documentName);
+            setNumber(res.data.number);
+            setSendDate(res.data.sendDate);
+            setCode(res.data.code);
+            setType(res.data.type);
+            setIssuedDate(res.data.issuedDate);
+            setSender(res.data.sender);
+            setLevel(res.data.level);
+            setCurrentLocation(res.data.currentLocation);
+            setNote(res.data.note);
+            setIsHaveTask(res.data.isHaveTask);
+        };
+
+        fetchApi();
+    }, [id]);
+
+    // Task input state
     const [isAssigned, setAssigned] = useState(false);
+    const [taskName, setTaskName] = useState('');
+    const [deadline, setDeadline] = useState('');
+
+    const [allTaskTypes, setAllTaskTypes] = useState([]);
+    // Get all task types
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await taskTypeServices.getAllTaskType();
+            if (res.code === 200) {
+                const typeNames = res?.data?.map((item) => item?.taskType);
+                setAllTaskTypes(typeNames);
+            } else {
+                console.log(res);
+            }
+        };
+
+        fetchApi();
+    }, [isSave]);
+    const [taskType, setTaskType] = useState('');
+    const [addTaskType, setAddTaskType] = useState(false);
+    const [newTaskType, setNewTaskType] = useState('');
+    // Handle add new task type
+    const handleAddNewTaskType = async () => {
+        const data = {
+            taskType: newTaskType,
+        };
+        const res = await taskTypeServices.createTaskType(data);
+        if (res.code === 200) {
+            setNewTaskType('');
+            setAddTaskType(false);
+            setIsSave((isSave) => !isSave);
+            successNotify(res.message, 1500);
+        } else {
+            errorNotify(res, 1500);
+        }
+    };
+
     const allUsers = useFetchUsers().publicUsers.filter((item) => item?.role === 'Member');
+    // Format all users array
+    const getUserOptions = () => {
+        const options = allUsers?.map((item) => {
+            return { value: item._id, label: item.fullName, flag: 'Support' };
+        });
+        return options;
+    };
+    const [assignTo, setAssignTo] = useState([]);
+    const [leader, setLeader] = useState();
+    const [taskDescribe, setTaskDescribe] = useState('');
 
     // Task input validation state
     const [isTaskNameErr, setIsTaskNameErr] = useState(false);
@@ -126,93 +215,10 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     const [isLeaderErr, setIsLeaderErr] = useState(false);
     const [leaderErrMsg, setLeaderErrMsg] = useState({});
 
-    const { id } = useParams();
-    const navigate = useNavigate();
-
-    // React-select style
-    const selectStyles = {
-        singleValue: (base) => ({
-            ...base,
-            fontSize: '1.5rem',
-            paddingLeft: '2px',
-        }),
-        placeholder: (base) => ({
-            ...base,
-            color: '#000000',
-            lineHeight: 0,
-            fontSize: '1.5rem',
-            paddingLeft: '8px',
-        }),
-        indicatorSeparator: (base) => ({
-            ...base,
-            display: 'none !important',
-        }),
-        indicatorsContainer: (base) => ({
-            ...base,
-            display: 'none !important',
-        }),
-        menu: (base) => ({
-            ...base,
-            padding: '0 !important',
-            borderRadius: 'unset !important',
-            marginTop: '1px !important',
-        }),
-        menuList: (base) => ({
-            ...base,
-            padding: '0 !important',
-            borderRadius: 'unset !important',
-        }),
-        option: (base, { isSelected }) => ({
-            ...base,
-            fontSize: '1.5rem',
-            padding: '0 16px',
-            color: isSelected ? '#ffffff' : '#000000',
-            backgroundColor: isSelected ? '#2684ff' : '#ffffff',
-            ':hover': {
-                color: '#ffffff',
-                backgroundColor: '#2684ff',
-            },
-        }),
-        noOptionsMessage: (base) => ({
-            ...base,
-            fontSize: '1.5rem',
-            padding: '0 16px',
-        }),
-        valueContainer: (base) => ({
-            ...base,
-            backgroundPosition: 'calc(100% - 12px) center !important',
-            background: `url("data:image/svg+xml,<svg height='20' width='20' viewBox='0 0 20 20' aria-hidden='true' class='svg' xmlns='http://www.w3.org/2000/svg'><path d='M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z'></path></svg>") no-repeat`,
-        }),
-    };
-
-    // Handle add new task type
-    const handleAddNewTaskType = async () => {
-        const data = {
-            taskType: newTaskType,
-        };
-        const res = await taskTypeServices.createTaskType(data);
-        if (res.code === 200) {
-            setNewTaskType('');
-            setAddTaskType(false);
-            setIsSave((isSave) => !isSave);
-            successNotify(res.message);
-        } else {
-            errorNotify(res);
-        }
-    };
-
     // Just get id of assigned user
     const getAssignToIds = (assignTo) => {
         const array = assignTo.map((item) => item.value);
         return array;
-    };
-
-    // Format all users array
-    const getUserOptions = () => {
-        const options = allUsers?.map((item) => {
-            return { value: item._id, label: item.fullName, flag: 'Support' };
-        });
-        return options;
     };
 
     // Create user resource for each assigned user
@@ -226,46 +232,51 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
     // Create or edit document function
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const isfullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
+
+        const isFullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
         const isNumberValid = fullNameValidator(number, setIsNumberErr, setNumberErrMsg);
         const isSendDateValid = dateValidator(sendDate, setIsSendDateErr, setSendDateErrMsg);
         const isCodeValid = fullNameValidator(code, setIsCodeErr, setCodeErrMsg);
-        const isSenderValid = fullNameValidator(sender, setIsSenderErr, setSenderErrMsg);
         const isIssuedDateValid = dateValidator(issuedDate, setIsIssuedDateErr, setIssuedDateErrMsg);
+        const isSenderValid = fullNameValidator(sender, setIsSenderErr, setSenderErrMsg);
         const isCurrLocationValid = dropListValidator(currentLocation, setIsCurrLocationErr, setCurrLocationErrMsg);
-        const isLeaderValid = dropListValidator(leader, setIsLeaderErr, setLeaderErrMsg);
-        const isAssignToValid = dropListValidator(assignTo, setIsAssignToErr, setAssignToErrMsg);
-        const isTaskNameValidator = fullNameValidator(taskName, setIsTaskNameErr, setTaskNameErrMsg);
-        const isTaskDeadlineValidator = dateValidator(deadline, setIsDeadlineErr, setDeadlineErrMsg);
         if (
-            !isfullNameValid ||
+            !isFullNameValid ||
             !isNumberValid ||
             !isSendDateValid ||
             !isCodeValid ||
-            !isSenderValid ||
             !isIssuedDateValid ||
+            !isSenderValid ||
             !isCurrLocationValid
         )
             return;
+
+        const isTaskNameValid= fullNameValidator(taskName, setIsTaskNameErr, setTaskNameErrMsg);
+        const isTaskDeadlineValid = dateValidator(deadline, setIsDeadlineErr, setDeadlineErrMsg);
+        const isAssignToValid = dropListValidator(assignTo, setIsAssignToErr, setAssignToErrMsg);
+        const isLeaderValid = dropListValidator(leader, setIsLeaderErr, setLeaderErrMsg);
         if (isAssigned) {
-            if (!isLeaderValid || !isAssignToValid || !isTaskNameValidator || !isTaskDeadlineValidator) return;
+            if (!isTaskNameValid || !isTaskDeadlineValid || !isAssignToValid || !isLeaderValid) return;
         }
+
         setLoading(true);
+
         const data = {
             documentName: fullName,
             number: number,
             sendDate: sendDate,
-            type: type,
-            documentIn: documentIn,
             code: code,
-            sender: sender,
+            type: type,
             issuedDate: issuedDate,
+            sender: sender,
             level: level,
-            note: note,
             currentLocation: currentLocation,
+            note: note,
+            documentIn: documentIn,
             isHaveTask: isAssigned ? true : false,
             assignTo: isAssigned ? assignTo : [],
         };
+
         let res;
         if (id) {
             res = await documentServices.updateDocument(id, data);
@@ -275,7 +286,7 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
         if (res.code === 200) {
             if (!attachFiles) {
                 setLoading(false);
-                successNotify(res.message);
+                successNotify(res.message, 1500);
                 navigate(`/documents/${path}`);
             } else {
                 const data = new FormData();
@@ -284,23 +295,23 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                 }
                 await documentServices.uploadFile(res.data._id, data);
                 setLoading(false);
-                successNotify(res.message);
+                successNotify(res.message, 1500);
                 navigate(`/documents/${path}`);
             }
             // ------------------------------------
             if (isAssigned) {
-                const taskDatas = {
+                const taskData = {
                     taskName: taskName,
-                    type: taskType,
                     dueDate: deadline,
+                    type: taskType,
+                    assignTo: assignTo,
+                    leader: leader,
+                    describe: taskDescribe,
                     level: level,
                     refLink: res.data.documentName,
-                    desc: taskDesc,
-                    leader: leader,
-                    assignTo: assignTo,
                     resources: setUserResource(),
                 };
-                const resTask = await taskServices.createTask(taskDatas);
+                const resTask = await taskServices.createTask(taskData);
                 // ------------------------------------
                 if (resTask.code === 200) {
                     await documentServices.changeDocumentStatus(res.data._id, { documentStatus: 'Đang xử lý' });
@@ -339,67 +350,63 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
         }
     };
 
-    //Get all task type
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await taskTypeServices.getAllTaskType();
-            if (res.code === 200) {
-                const typeName = res?.data?.map((item) => item?.taskType);
-                setAllTaskTypes(typeName);
-            } else {
-                console.log(res);
-            }
-        };
-        fetchApi();
-    }, [isSave]);
+    // React-select style
+    const selectStyles = {
+        placeholder: (base) => ({
+            ...base,
+            paddingLeft: '8px',
+            color: '#000000',
+            fontSize: '1.5rem',
+            lineHeight: 0,
+        }),
+        indicatorsContainer: (base) => ({
+            ...base,
+            display: 'none !important',
+        }),
+        indicatorSeparator: (base) => ({
+            ...base,
+            display: 'none !important',
+        }),
+        valueContainer: (base) => ({
+            ...base,
+            backgroundPosition: 'calc(100% - 12px) center !important',
+            background: `url("data:image/svg+xml,<svg height='20' width='20' viewBox='0 0 20 20' aria-hidden='true' class='svg' xmlns='http://www.w3.org/2000/svg'><path d='M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z'></path></svg>") no-repeat`,
+        }),
+        singleValue: (base) => ({
+            ...base,
+            paddingLeft: '2px',
+            fontSize: '1.5rem',
+        }),
+        menu: (base) => ({
+            ...base,
+            marginTop: '1px !important',
+            borderRadius: 'unset !important',
+            padding: '0 !important',
+        }),
+        menuList: (base) => ({
+            ...base,
+            borderRadius: 'unset !important',
+            padding: '0 !important',
+        }),
+        option: (base, { isSelected }) => ({
+            ...base,
+            backgroundColor: isSelected ? '#2684ff' : '#ffffff',
+            padding: '0 16px',
+            fontSize: '1.5rem',
+            color: isSelected ? '#ffffff' : '#000000',
+            ':hover': {
+                backgroundColor: '#2684ff',
+                color: '#ffffff',
+            },
+        }),
+        noOptionsMessage: (base) => ({
+            ...base,
+            padding: '0 16px',
+            fontSize: '1.5rem',
+        }),
+    };
 
-    //Get all sender
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await senderServices.getAllSenders();
-            if (res.code === 200) {
-                const sender = res?.data?.map((item) => item?.sender);
-                setAllSenders(sender);
-            } else {
-                console.log(res);
-            }
-        };
-        fetchApi();
-    }, [isSave]);
-
-    // Get all doc type
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await documentTypeServices.getAllDocumentType();
-            if (res.code === 200) {
-                const typeName = res?.data?.map((item) => item?.documentTypeName);
-                setAllDocTypes(typeName);
-            } else {
-                console.log(res);
-            }
-        };
-        fetchApi();
-    }, [isSave]);
-
-    // Get available document data when edit document
-    useEffect(() => {
-        if (!id) return;
-        const fetchApi = async () => {
-            const res = await documentServices.getDocumentById(id);
-            setFullName(res.data.documentName);
-            setNumber(res.data.number);
-            setSendDate(res.data.sendDate);
-            setCode(res.data.code);
-            setType(res.data.type);
-            setIssuedDate(res.data.issuedDate);
-            setSender(res.data.sender);
-            setLevel(res.data.level);
-            setCurrentLocation(res.data.currentLocation);
-            setNote(res.data.note);
-            setIsHaveTask(res.data.isHaveTask);
-        };
-        fetchApi();
-    }, [id]);
+    const navigate = useNavigate();
 
     return (
         <>
@@ -412,8 +419,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                             Tên văn bản: <span className="text-red-600">*</span>
                         </label>
                         <InputField
-                            placeholder="Tên văn bản"
                             id="docName"
+                            placeholder="Tên văn bản"
                             value={fullName}
                             setValue={setFullName}
                             onBlur={() => fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg)}
@@ -427,8 +434,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                 Số {inputLabel}: <span className="text-red-600">*</span>
                             </label>
                             <InputField
-                                placeholder={`Số ${inputLabel}`}
                                 id="number"
+                                placeholder={`Số ${inputLabel}`}
                                 value={number}
                                 setValue={setNumber}
                                 onBlur={() => fullNameValidator(number, setIsNumberErr, setNumberErrMsg)}
@@ -456,8 +463,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                 Số ký hiệu: <span className="text-red-600">*</span>
                             </label>
                             <InputField
-                                placeholder="Số ký hiệu"
                                 id="docCode"
+                                placeholder="Số ký hiệu"
                                 value={code}
                                 setValue={setCode}
                                 onBlur={() => fullNameValidator(code, setIsCodeErr, setCodeErrMsg)}
@@ -480,8 +487,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                 ) : (
                                     <div className="flex-1">
                                         <InputField
-                                            placeholder="Loại văn bản"
                                             id="docType"
+                                            placeholder="Loại văn bản"
                                             value={newDocType}
                                             setValue={setNewDocType}
                                             className="default"
@@ -536,8 +543,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                 ) : (
                                     <div className="flex-1">
                                         <InputField
-                                            placeholder="Nơi ban hành"
                                             id="sender"
+                                            placeholder="Nơi ban hành"
                                             value={newSender}
                                             setValue={setNewSender}
                                             className={isSenderErr ? 'invalid' : 'default'}
@@ -593,8 +600,9 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                             <FileInput setAttachFiles={setAttachFiles} />
                         </div>
                     )}
+
                     {(title === 'Thêm văn bản đến mới' || (title === 'Sửa văn bản đến' && isHaveTask === false)) && (
-                        <div className="flex items-center gap-x-5 mt-7">
+                        <div className="mt-7 flex items-center gap-x-5">
                             <label className="font-bold">Giao việc:</label>
                             <SwitchButton
                                 checked={isAssigned}
@@ -604,33 +612,33 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                         </div>
                     )}
                     {isAssigned && (
-                        <div className="border-[2px] border-[#bbbbbb] border-dashed p-3 mt-7">
+                        <div className="mt-7 border-[2px] border-dashed border-[#bbbbbb] p-3">
                             <div>
                                 <label className="font-bold">
                                     Tên công việc: <span className="text-red-600">*</span>
                                 </label>
                                 <InputField
                                     id="taskName"
-                                    className={isTaskNameErr ? 'invalid' : 'default'}
                                     placeholder="Tên công việc"
                                     value={taskName}
                                     setValue={setTaskName}
                                     onBlur={() => fullNameValidator(taskName, setIsTaskNameErr, setTaskNameErrMsg)}
+                                    className={isTaskNameErr ? 'invalid' : 'default'}
                                 />
                                 <p className="text-red-600 text-[1.3rem]">{taskNameErrMsg.fullName}</p>
                             </div>
-                            <div className="flex flex-col md:flex-row mt-7 gap-6">
+                            <div className="mt-7 flex flex-col md:flex-row gap-6">
                                 <div className="flex-1">
                                     <label className="font-bold">
                                         Ngày đến hạn: <span className="text-red-600">*</span>
                                     </label>
                                     <InputField
                                         name="datetime-local"
-                                        className={isDeadlineErr ? 'invalid' : 'default'}
                                         value={deadline}
                                         setValue={setDeadline}
                                         min={disabledPastDate()}
                                         onBlur={() => dateValidator(deadline, setIsDeadlineErr, setDeadlineErrMsg)}
+                                        className={isDeadlineErr ? 'invalid' : 'default'}
                                     />
                                     <p className="text-red-600 text-[1.3rem]">{deadlineErrMsg.dueDate}</p>
                                 </div>
@@ -640,8 +648,8 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                         {!addTaskType ? (
                                             <div className="flex-1">
                                                 <DropList
-                                                    selectedValue={taskType}
                                                     options={allTaskTypes}
+                                                    selectedValue={taskType}
                                                     setValue={setTaskType}
                                                     setId={() => undefined}
                                                 />
@@ -650,10 +658,10 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                             <div className="flex-1">
                                                 <InputField
                                                     id="type"
-                                                    className="default"
                                                     placeholder="Loại công việc"
                                                     value={newTaskType}
                                                     setValue={setNewTaskType}
+                                                    className="default"
                                                 />
                                             </div>
                                         )}
@@ -666,25 +674,25 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                             </div>
                                         ) : (
                                             <div onClick={handleAddNewTaskType} className="text-[2rem] cursor-pointer">
-                                                <FontAwesomeIcon icon={faPlusCircle} />
+                                                <FontAwesomeIcon className="text-[blue]" icon={faPlusCircle} />
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex flex-col md:flex-row gap-6 mt-7">
+                            <div className="mt-7 flex flex-col md:flex-row gap-6">
                                 <div className="flex-1">
                                     <label className="font-bold">
                                         Nhóm trưởng: <span className="text-red-600">*</span>
                                     </label>
                                     <Select
                                         styles={selectStyles}
-                                        className={isLeaderErr && 'droplistInvalid'}
                                         placeholder="--Vui lòng chọn--"
                                         options={assignTo}
+                                        value={leader}
                                         onChange={setLeader}
                                         onBlur={() => dropListValidator(leader, setIsLeaderErr, setLeaderErrMsg)}
-                                        value={leader}
+                                        className={isLeaderErr && 'droplistInvalid'}
                                     />
                                     <p className="text-red-600 text-[1.3rem]">{leaderErrMsg.leader}</p>
                                 </div>
@@ -695,12 +703,12 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                     <Select
                                         styles={selectStyles}
                                         isMulti
-                                        className={isAssignToErr && 'droplistInvalid'}
                                         placeholder="--Vui lòng chọn--"
                                         options={getUserOptions()}
+                                        value={assignTo}
                                         onChange={setAssignTo}
                                         onBlur={() => dropListValidator(assignTo, setIsAssignToErr, setAssignToErrMsg)}
-                                        value={assignTo}
+                                        className={isAssignToErr && 'droplistInvalid'}
                                     />
                                     <p className="text-red-600 text-[1.3rem]">{assignToErrMsg.assignTo}</p>
                                 </div>
@@ -709,12 +717,12 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                                 <label className="font-bold">Mô tả công việc:</label>
                                 <InputField
                                     textarea
-                                    className="default textarea"
-                                    placeholder="Mô tả công việc"
                                     rows="6"
                                     cols="50"
-                                    value={taskDesc}
-                                    setValue={setTaskDesc}
+                                    placeholder="Mô tả công việc"
+                                    value={taskDescribe}
+                                    setValue={setTaskDescribe}
+                                    className="default textarea"
                                 />
                             </div>
                         </div>
@@ -724,12 +732,12 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                         <label className="font-bold">Trích yếu:</label>
                         <InputField
                             textarea
-                            placeholder="Trích yếu"
-                            className="default textarea"
-                            value={note}
-                            setValue={setNote}
                             rows="6"
                             cols="50"
+                            placeholder="Trích yếu"
+                            value={note}
+                            setValue={setNote}
+                            className="default textarea"
                         />
                     </div>
                     <div className="mt-12 block md:flex items-center gap-5">

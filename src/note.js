@@ -37,7 +37,7 @@
 // import __uppercase from './uppercase.js';
 // __uppercase('test');
 
-// *** type (TypeScript) vs typedef (C/C++) ***
+// // *** type (TypeScript) vs typedef (C/C++) ***
 // type MyNumber = number; // Creating an alias MyNumber for the number type
 // type Point = {
 //     x: number;
