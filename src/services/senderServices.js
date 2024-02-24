@@ -1,6 +1,6 @@
 import httpRequest from '~/utils/httpRequest';
 
-// Create sender
+// Create sender function
 export const createSender = async (data = {}) => {
     try {
         const res = await httpRequest.post('/sender/create', data);
