@@ -35,6 +35,17 @@ export const getTaskById = async (taskId) => {
     }
 };
 
+// Update task function
+export const updateTask = async (taskId, data = {}) => {
+    try {
+        const res = await httpRequest.put(`/task/update/${taskId}`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data.message;
+    }
+};
+
 // Upload file of task function
 export const uploadFile = async (taskId, data) => {
     try {
@@ -57,17 +68,6 @@ export const deleteFileUrl = async (taskId, data) => {
     }
 };
 
-// Update task function
-export const updateTask = async (taskId, data = {}) => {
-    try {
-        const res = await httpRequest.put(`/task/update/${taskId}`, data);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data.message;
-    }
-};
-
 // Change task progress function
 export const updateProgress = async (taskId, data = {}) => {
     try {
@@ -79,10 +79,54 @@ export const updateProgress = async (taskId, data = {}) => {
     }
 };
 
+// Change assignee role function
+export const changeAssignRole = async (taskId, data) => {
+    try {
+        const res = await httpRequest.patch(`/task/change-assignee-role/${taskId}`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data.message;
+    }
+};
+
 // Undo task function
 export const undoTask = async (taskId, data = {}) => {
     try {
         const res = await httpRequest.patch(`/task/undo/${taskId}`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data.message;
+    }
+};
+
+// Submit assignment function
+export const uploadResource = async (taskId, data) => {
+    try {
+        const res = await httpRequest.post(`/task/submit/${taskId}`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data.message;
+    }
+};
+
+// Delete each attach file of assignment function
+export const deleteSubmitFileUrl = async (taskId, data) => {
+    try {
+        const res = await httpRequest.patch(`/task/delete-submit-file-url/${taskId}`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data.message;
+    }
+};
+
+// Un-submit assignment function
+export const changeSubmitStatus = async (taskId, data) => {
+    try {
+        const res = await httpRequest.patch(`/task/un-submit/${taskId}`, data);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -105,50 +149,6 @@ export const deleteTaskById = async (taskId) => {
 export const deleteManyTask = async (data = {}) => {
     try {
         const res = await httpRequest.post('/task/delete-many', data);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data.message;
-    }
-};
-
-// Submit assignment function
-export const uploadResource = async (taskId, data) => {
-    try {
-        const res = await httpRequest.post(`/task/submit/${taskId}`, data);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data.message;
-    }
-};
-
-// Un-submit assignment function
-export const changeSubmitStatus = async (taskId, data) => {
-    try {
-        const res = await httpRequest.patch(`/task/un-submit/${taskId}`, data);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data.message;
-    }
-};
-
-// Delete each attach file of assignment function
-export const deleteSubmitFileUrl = async (taskId, data) => {
-    try {
-        const res = await httpRequest.patch(`/task/delete-submit-file-url/${taskId}`, data);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        return error.response.data.message;
-    }
-};
-
-// Change assignee role function
-export const changeAssignRole = async (taskId, data) => {
-    try {
-        const res = await httpRequest.patch(`/task/change-assignee-role/${taskId}`, data);
         return res.data;
     } catch (error) {
         console.log(error);

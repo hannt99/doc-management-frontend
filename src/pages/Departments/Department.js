@@ -9,15 +9,15 @@ import {
     faAngleLeft,
     faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
-import Loading from '~/components/Loading';
-import * as departmentServices from '~/services/departmentServices';
-import { handleCheck, handleCheckAll } from '~/utils/handleCheckbox';
-import SwitchButton from '~/components/SwitchButton';
 import InputField from '~/components/InputField';
 import { useDebounce } from '~/hooks';
-import { successNotify, errorNotify } from '~/components/ToastMessage';
+import SwitchButton from '~/components/SwitchButton';
+import { handleCheck, handleCheckAll } from '~/utils/handleCheckbox';
 import DepartmentCard from '~/components/Card/DepartmentCard';
+import * as departmentServices from '~/services/departmentServices';
 import ConfirmationDialog from '~/components/ConfirmationDialog';
+import { successNotify, errorNotify } from '~/components/ToastMessage';
+import Loading from '~/components/Loading';
 
 const Department = () => {
     const [loading, setLoading] = useState(false);
@@ -27,28 +27,40 @@ const Department = () => {
     const [allDepartments, setAllDepartments] = useState([]); // all departments
     const [departmentLists, setDepartmentLists] = useState([]); // departments with filter and pagination
 
-    const tableHeader = ['STT', 'Tên phòng ban', 'Trạng thái', 'Ghi chú', 'Thao tác'];
     // Pagination state
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
-    const totalPage = Math.ceil(allDepartments?.length / limit);
     const [rowStart, setRowStart] = useState(1);
     const [rowEnd, setRowEnd] = useState(0);
+    const [limit, setLimit] = useState(5);
+    const totalPage = Math.ceil(allDepartments?.length / limit);
 
-    // Checkbox state
-    const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('departmentChecked')) || []);
-    const [checkedAll, setCheckedAll] = useState(JSON.parse(localStorage.getItem('isCheckAllDepartment')) || false);
+    // Go to next page
+    const handleNextPage = () => {
+        setPage(page + 1);
+        setRowStart(rowStart + +limit);
+        setRowEnd(rowEnd + +limit);
+    };
 
-    // Activate department state
-    const [activeId, setActiveId] = useState('');
-    const [isActived, setIsActived] = useState(false);
-
-    const [deleteId, setDeleteId] = useState('');
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState('');
+    // Back to previous page
+    const handlePrevPage = () => {
+        setPage(page - 1);
+        setRowStart(rowStart - +limit);
+        setRowEnd(rowEnd - +limit);
+    };
 
     const [searchValue, setSearchValue] = useState('');
     const debouncedValue = useDebounce(searchValue, 300);
+
+    // Set pagination state to default when have filter
+    useEffect(() => {
+        if (limit || debouncedValue) {
+            setPage(1);
+            setRowStart(1);
+            setRowEnd(0);
+        } else {
+            return;
+        }
+    }, [limit, debouncedValue]);
 
     // Get department from server
     useEffect(() => {
@@ -65,33 +77,30 @@ const Department = () => {
         };
 
         fetchApi();
-    }, [debouncedValue, page, limit, isSave]);
+    }, [page, limit, debouncedValue, isSave]);
 
-    // Set pagination state to default when have filter
+    const tableHeader = ['STT', 'Tên phòng ban', 'Trạng thái', 'Ghi chú', 'Thao tác'];
+    // Checkbox state
+    const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('departmentChecked')) || []);
+    // Save checked list in localStorage
     useEffect(() => {
-        if (debouncedValue || limit) {
-            setPage(1);
-            setRowStart(1);
-            setRowEnd(0);
-        } else {
-            return;
-        }
-    }, [debouncedValue, limit]);
+        localStorage.setItem('departmentChecked', JSON.stringify(checked));
+    }, [checked]);
 
-    // Go to next page
-    const handleNextPage = () => {
-        setPage(page + 1);
-        setRowStart(rowStart + +limit);
-        setRowEnd(rowEnd + +limit);
-    };
+    const [checkedAll, setCheckedAll] = useState(JSON.parse(localStorage.getItem('isCheckAllDepartment')) || false);
+    // Save checkedAll boolean in localStorage
+    useEffect(() => {
+        localStorage.setItem('isCheckAllDepartment', JSON.stringify(checkedAll));
+    }, [checkedAll]);
 
-    // Back to previous page
-    const handlePrevPage = () => {
-        setPage(page - 1);
-        setRowStart(rowStart - +limit);
-        setRowEnd(rowEnd - +limit);
-    };
+    // Check all rows of department
+    useEffect(() => {
+        handleCheckAll(checkedAll, checked?.length, allDepartments, setChecked);
+    }, [checkedAll, checked?.length, allDepartments]);
 
+    // Activate department state
+    const [activeId, setActiveId] = useState('');
+    const [isActived, setIsActived] = useState(false);
     // Activate department function
     useEffect(() => {
         if (!activeId) return;
@@ -112,20 +121,9 @@ const Department = () => {
         handleActivateDepartment();
     }, [activeId, isActived]);
 
-    // Save checked list in localStorage
-    useEffect(() => {
-        localStorage.setItem('departmentChecked', JSON.stringify(checked));
-    }, [checked]);
-
-    // Save checkedAll boolean in localStorage
-    useEffect(() => {
-        localStorage.setItem('isCheckAllDepartment', JSON.stringify(checkedAll));
-    }, [checkedAll]);
-
-    // Check all rows of department
-    useEffect(() => {
-        handleCheckAll(checkedAll, checked?.length, allDepartments, setChecked);
-    }, [checkedAll, checked?.length, allDepartments]);
+    const [deleteId, setDeleteId] = useState('');
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState('');
 
     // Delete one row function
     const handleDelete = async (id) => {
@@ -160,10 +158,10 @@ const Department = () => {
             const res = await departmentServices.deleteManyDepartment(data);
             if (res.code === 200) {
                 setChecked([]);
-                setIsSave((isSave) => !isSave);
                 setPage(1);
                 setRowStart(1);
                 setRowEnd(0);
+                setIsSave((isSave) => !isSave);
                 successNotify(res.message, 1500);
             } else {
                 errorNotify(res, 1500);
@@ -296,9 +294,9 @@ const Department = () => {
                                                             <NavLink to={`/departments/edit/${dl?._id}`}>
                                                                 <div className="w-[30px] h-[30px] rounded-lg bg-green-600 p-2 hover:text-primary cursor-pointer flex">
                                                                     <FontAwesomeIcon
-                                                                        className="m-auto"
                                                                         icon={faPenToSquare}
                                                                         title="Chỉnh sửa"
+                                                                        className="m-auto"
                                                                     />
                                                                 </div>
                                                             </NavLink>
@@ -307,9 +305,9 @@ const Department = () => {
                                                                 className="ml-2 w-[30px] h-[30px] rounded-lg bg-red-600 p-2 hover:text-primary cursor-pointer flex"
                                                             >
                                                                 <FontAwesomeIcon
-                                                                    className="m-auto"
                                                                     icon={faTrashCan}
                                                                     title="Xoá"
+                                                                    className="m-auto"
                                                                 />
                                                             </div>
                                                         </div>

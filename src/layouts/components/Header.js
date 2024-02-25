@@ -13,36 +13,16 @@ import { successNotify, errorNotify } from '~/components/ToastMessage';
 import { UserInfoContext } from '~/App';
 
 const Header = ({ setToggle, socket }) => {
-    const [toggleSidebar, setToggleSidebar] = useState(false);
-    const [notifications, setNotifications] = useState([]);
-    const [notification, setNotification] = useState(null);
-    const [userAvatar, setUserAvatar] = useState('');
-    const [userName, setUserName] = useState('');
-    const [tab, setTab] = useState(false);
-    const [showChangePassword, setShowChangePassword] = useState(false);
-
-    const { isChangeUserInfo } = useContext(UserInfoContext);
-
     const [isSave, setIsSave] = useState(false);
 
-    const navigate = useNavigate();
-
+    const [toggleSidebar, setToggleSidebar] = useState(false);
     // Toggle sidebar
     useEffect(() => {
         setToggle(toggleSidebar);
     }, [toggleSidebar, setToggle]);
 
-    // Get current user avatar
-    useEffect(() => {
-        const fetchApi = async () => {
-            const res = await authServices.getCurrUser();
-            setUserAvatar(res?.avatar);
-            setUserName(res?.fullName);
-        };
-
-        fetchApi();
-    }, [isChangeUserInfo]);
-
+    const [tab, setTab] = useState(false);
+    const [notifications, setNotifications] = useState([]);
     // Get all notifications from server
     useEffect(() => {
         const fetchApi = async () => {
@@ -55,28 +35,27 @@ const Header = ({ setToggle, socket }) => {
                     setNotifications(res.notRead);
                 }
             } else {
-                // console.log(res);
+                console.log(res);
             }
         };
 
         fetchApi();
     }, [tab, isSave]);
 
+    const [notification, setNotification] = useState(null);
     // Get realtime notification function
     useEffect(() => {
         socket.current?.on('getNotification', (data) => {
-            console.log('Header -> receive notification');
             setNotification({
-                _id: data._id.find((item) => item.userId === data.receiverId)?.notiId,
                 notification: data.text,
                 linkTask: data.linkTask,
-                isRead: data.isRead,
-                createdAt: Date.now(),
                 userId: data.receiverId,
+                isRead: data.isRead,
+                _id: data._id.find((item) => item.userId === data.receiverId)?.notiId,
+                createdAt: Date.now(),
             });
         });
     }, [socket]);
-
     // Merge notification from db and socket.io
     useEffect(() => {
         if (!notification) return;
@@ -109,6 +88,22 @@ const Header = ({ setToggle, socket }) => {
         }
     };
 
+    const { isChangeUserInfo } = useContext(UserInfoContext);
+    const [userAvatar, setUserAvatar] = useState('');
+    const [userName, setUserName] = useState('');
+    // Get current user avatar
+    useEffect(() => {
+        const fetchApi = async () => {
+            const res = await authServices.getCurrUser();
+            setUserAvatar(res?.avatar);
+            setUserName(res?.fullName);
+        };
+
+        fetchApi();
+    }, [isChangeUserInfo]);
+
+    const [showChangePassword, setShowChangePassword] = useState(false);
+
     // Sign out function
     const handleSignOut = async () => {
         const refreshToken = localStorage.getItem('refreshToken');
@@ -127,21 +122,19 @@ const Header = ({ setToggle, socket }) => {
         }
     };
 
+    const navigate = useNavigate();
+
     return (
         <>
-            <div
-                id="here1"
-                className="w-full h-[64px] border-b-[1px] border-solid border-[#cccccc] pl-[16px] pr-[24px] bg-white text-[#9fa9ae] flex items-center justify-between xl:justify-end"
-            >
+            <div className="w-full h-[64px] border-b-[1px] border-solid border-[#cccccc] bg-white pl-[16px] pr-[24px] text-[#9fa9ae] flex items-center justify-between xl:justify-end">
                 <div
                     className="xl:hidden p-[8px] hover:text-black cursor-pointer"
                     onClick={() => setToggleSidebar(!toggleSidebar)}
                 >
                     <FontAwesomeIcon icon={faBars} />
                 </div>
-
-                <div id="_here2" className="flex items-center">
-                    <div id="_here3" className="relative p-[8px] hover:text-black cursor-pointer flex group">
+                <div className="flex items-center">
+                    <div className="relative p-[8px] hover:text-black cursor-pointer flex group">
                         <FontAwesomeIcon className="m-auto text-[2.2rem] leading-none" icon={faBell} />
                         <p
                             className={
@@ -153,20 +146,17 @@ const Header = ({ setToggle, socket }) => {
                             {notificationNotReadLength(notifications)}
                         </p>
                         <div className="hidden group-hover:block absolute bottom-[-12px] right-0 w-[100px] h-[24px] bg-transparent"></div>
-                        <div
-                            id="_here4"
-                            className="hidden group-hover:block absolute top-[48px] right-[-80px] md:right-0 shadow-4Way bg-white text-black z-50"
-                        >
+                        <div className="hidden group-hover:block absolute top-[48px] right-[-80px] md:right-0 shadow-4Way bg-white text-black z-50">
                             <div className="p-[12px] cursor-default">
                                 <h3 className="text-[2.4rem] font-bold">Thông báo</h3>
                                 <div className="text-[1.5rem] flex items-center gap-x-3">
                                     <div
+                                        onClick={() => setTab(false)}
                                         className={
                                             tab === false
                                                 ? 'rounded-xl bg-blue-50 hover:bg-[#f1f1f1] p-3 text-blue-600 font-semibold cursor-pointer'
                                                 : 'rounded-xl              hover:bg-[#f1f1f1] p-3                 font-semibold cursor-pointer'
                                         }
-                                        onClick={() => setTab(false)}
                                     >
                                         Tất cả
                                     </div>
@@ -206,16 +196,16 @@ const Header = ({ setToggle, socket }) => {
                                             );
                                         })
                                 ) : (
-                                    <li className="w-full truncate p-[12px] text-[1.3rem] text-center cursor-default">
+                                    <li className="w-full truncate p-[12px] text-center text-[1.3rem] cursor-default">
                                         Không có thông báo
                                     </li>
                                 )}
                             </ul>
                         </div>
                     </div>
-                    <div id="_here5" className="relative group">
+                    <div className="relative group">
                         <div className="flex items-center gap-x-3 cursor-pointer">
-                            <div className="w-[40px] h-[40px] rounded-full ml-8">
+                            <div className="ml-8 w-[40px] h-[40px] rounded-full">
                                 <img
                                     className="w-full h-full rounded-full object-cover"
                                     src={
@@ -230,10 +220,7 @@ const Header = ({ setToggle, socket }) => {
                             <FontAwesomeIcon className="group-hover:text-black" icon={faCaretDown} />
                         </div>
                         <div className="hidden group-hover:block w-[180px] h-[24px] absolute bottom-[-12px] right-0 bg-transparent"></div>
-                        <div
-                            id="_here6"
-                            className="hidden group-hover:block absolute top-[50px] right-0 shadow-4Way bg-white text-black"
-                        >
+                        <div className="hidden group-hover:block absolute top-[50px] right-0 shadow-4Way bg-white text-black">
                             <ul className="w-[180px]">
                                 <li className="hover:bg-[#eeeeee] p-[12px] hover:text-[#321fdb] cursor-pointer">
                                     <NavLink className="py-[12px]" to="/profile">
@@ -242,8 +229,8 @@ const Header = ({ setToggle, socket }) => {
                                     </NavLink>
                                 </li>
                                 <li
-                                    className="p-[12px] cursor-pointer hover:bg-[#eeeeee] hover:text-[#321fdb]"
                                     onClick={() => setShowChangePassword(true)}
+                                    className="p-[12px] hover:bg-[#eeeeee] hover:text-[#321fdb] cursor-pointer"
                                 >
                                     <FontAwesomeIcon icon={faKey} />
                                     <span className="ml-3">Đổi mật khẩu</span>
