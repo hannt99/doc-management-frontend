@@ -1,27 +1,29 @@
 import { useState } from 'react';
-import InputField from '~/components/InputField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
+import InputField from '~/components/InputField';
 import { passwordValidator } from '~/utils/formValidation';
 import * as userServices from '~/services/userServices';
-import Loading from '../Loading';
+import Loading from '~/components/Loading';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const ChangePasswordForm = ({ setShowChangePassword }) => {
+    const [loading, setLoading] = useState(false);
+    
     // Input state
     const [oldPassword, setOldPassword] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    
+    // Input validation state
     const [isOldPasswordErr, setIsOldPasswordErr] = useState(false);
     const [oldPasswordErrMsg, setOldPasswordErrMsg] = useState({});
 
-    const [password, setPassword] = useState('');
     const [isPasswordErr, setIsPasswordErr] = useState(false);
     const [passwordErrMsg, setPasswordErrMsg] = useState({});
 
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [isConfirmPasswordErr, setIsConfirmPasswordErr] = useState(false);
     const [confirmPasswordErrMsg, setConfirmPasswordErrMsg] = useState({});
-
-    const [loading, setLoading] = useState(false);
 
     // Change password function
     const handleSubmit = async (e) => {
@@ -61,27 +63,27 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
     return (
         <>
             <div
-                className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[0.3] flex items-center justify-center"
                 onClick={() => setShowChangePassword(false)}
+                className="fixed top-0 left-0 bottom-0 right-0 bg-[#000000]/[0.3] flex items-center justify-center"
             >
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way p-[36px] bg-white animate-fadeIn z-[999]"
+                    className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way bg-white p-[36px] animate-fadeIn z-[999]"
                 >
                     <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-center mb-16 text-[#9fa9ae] text-[2.0rem] font-medium">Đổi mật khẩu</h1>
+                    <h1 className="mb-16 text-center text-[#9fa9ae] text-[2.0rem] font-medium">Đổi mật khẩu</h1>
                     <form>
                         <InputField
                             placeholder="Mật khẩu cũ"
                             name="password"
                             value={oldPassword}
                             setValue={setOldPassword}
+                            className={isOldPasswordErr ? 'invalid' : 'default'}
                             onBlur={() =>
                                 passwordValidator(oldPassword, oldPassword, setIsOldPasswordErr, setOldPasswordErrMsg)
                             }
-                            className={isOldPasswordErr ? 'invalid' : 'default'}
                         />
                         <p className="text-red-600 text-[1.3rem]">{oldPasswordErrMsg.oldPassword}</p>
                         <div className="mt-7">
@@ -90,10 +92,10 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                                 name="password"
                                 value={password}
                                 setValue={setPassword}
+                                className={isPasswordErr ? 'invalid' : 'default'}
                                 onBlur={() =>
                                     passwordValidator(password, password, setIsPasswordErr, setPasswordErrMsg)
                                 }
-                                className={isPasswordErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{passwordErrMsg.newPassword}</p>
                         </div>
@@ -103,6 +105,7 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                                 name="password"
                                 value={confirmPassword}
                                 setValue={setConfirmPassword}
+                                className={isConfirmPasswordErr ? 'invalid' : 'default'}
                                 onBlur={() =>
                                     passwordValidator(
                                         confirmPassword,
@@ -111,7 +114,6 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                                         setConfirmPasswordErrMsg,
                                     )
                                 }
-                                className={isConfirmPasswordErr ? 'invalid' : 'default'}
                             />
                             <p className="text-red-600 text-[1.3rem]">{confirmPasswordErrMsg.confirmPassword}</p>
                         </div>
@@ -124,7 +126,7 @@ const ChangePasswordForm = ({ setShowChangePassword }) => {
                             </button>
                             <button
                                 onClick={() => setShowChangePassword(false)}
-                                className="w-full mt-12 rounded-md px-[16px] py-[8px] bg-red-600 hover:bg-[#1b2e4b] text-[white] transition-all duration-[1s]"
+                                className="mt-12 w-full rounded-md bg-red-600 hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
                             >
                                 <FontAwesomeIcon icon={faXmark} /> Hủy
                             </button>

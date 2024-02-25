@@ -251,7 +251,7 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
         )
             return;
 
-        const isTaskNameValid= fullNameValidator(taskName, setIsTaskNameErr, setTaskNameErrMsg);
+        const isTaskNameValid = fullNameValidator(taskName, setIsTaskNameErr, setTaskNameErrMsg);
         const isTaskDeadlineValid = dateValidator(deadline, setIsDeadlineErr, setDeadlineErrMsg);
         const isAssignToValid = dropListValidator(assignTo, setIsAssignToErr, setAssignToErrMsg);
         const isLeaderValid = dropListValidator(leader, setIsLeaderErr, setLeaderErrMsg);
@@ -326,19 +326,20 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
                         getAssignToIds(resTask.data.assignTo)?.map(async (userId) => {
                             const noti = await notificationServices.createNotification({
                                 notification: 'Bạn có nhiệm vụ mới',
-                                userId: userId,
                                 linkTask: `${process.env.REACT_APP_BASE_URL}/tasks/detail/${resTask.data._id}`,
+                                userId: userId,
                             });
+
                             return { notiId: noti.data._id, userId: noti.data.userId };
                         }),
                     );
                     socket.current?.emit('sendNotification', {
                         senderId: '',
-                        _id: newNotiId,
-                        receiverId: getAssignToIds(resTask.data.assignTo),
                         text: 'Bạn có nhiệm vụ mới',
                         linkTask: `${process.env.REACT_APP_BASE_URL}/tasks/detail/${resTask.data._id}`,
+                        receiverId: getAssignToIds(resTask.data.assignTo),
                         isRead: false,
+                        _id: newNotiId,
                     });
                 }
                 // ------------------------------------
@@ -346,7 +347,7 @@ const CreateDocument = ({ title, inputLabel, path, documentIn, socket }) => {
             // ------------------------------------
         } else {
             setLoading(false);
-            errorNotify(res);
+            errorNotify(res, 1500);
         }
     };
 
