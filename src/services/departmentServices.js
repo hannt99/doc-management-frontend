@@ -12,9 +12,9 @@ export const createDepartment = async (data = {}) => {
 };
 
 // Get all departments function
-export const getAllDepartment = async (page, limit, search) => {
+export const getAllDepartment = async (limit, page, search) => {
     try {
-        const res = await httpRequest.get(`/department/get-all?page=${page}&limit=${limit}&search=${search}`);
+        const res = await httpRequest.get(`/department/get-all?limit=${limit}&page=${page}&search=${search}`);
         return res.data;
     } catch (error) {
         console.log(error);

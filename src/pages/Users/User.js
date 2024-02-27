@@ -5,30 +5,26 @@ import {
     faSearch,
     faTrashCan,
     faPlusCircle,
+    faEye,
     faPenToSquare,
     faAngleLeft,
     faAngleRight,
-    faEye,
 } from '@fortawesome/free-solid-svg-icons';
-import Loading from '~/components/Loading';
-import * as userServices from '~/services/userServices';
-import { handleCheck, handleCheckAll } from '~/utils/handleCheckbox';
-import DropList from '~/components/DropList';
-import SwitchButton from '~/components/SwitchButton';
 import InputField from '~/components/InputField';
 import { useDebounce } from '~/hooks';
-import UserDetailCard from '~/components/Card/UserDetailCard';
+import DropList from '~/components/DropList';
+import SwitchButton from '~/components/SwitchButton';
+import { handleCheck, handleCheckAll } from '~/utils/handleCheckbox';
 import UserCard from '~/components/Card/UserCard';
-import { successNotify, errorNotify } from '~/components/ToastMessage';
+import UserDetailCard from '~/components/Card/UserDetailCard';
+import * as userServices from '~/services/userServices';
 import ConfirmationDialog from '~/components/ConfirmationDialog';
+import { successNotify, errorNotify } from '~/components/ToastMessage';
+import Loading from '~/components/Loading';
 
 const User = () => {
     const [loading, setLoading] = useState(false);
     const [isSave, setIsSave] = useState(false);
-
-    // User state
-    const [allUsers, setAllUsers] = useState([]); // all users
-    const [userLists, setUserLists] = useState([]); // users with filter and pagination
 
     const tableHeader = [
         'STT',
@@ -40,36 +36,17 @@ const User = () => {
         'Trạng thái',
         'Thao tác',
     ];
+
+    // User state
+    const [allUsers, setAllUsers] = useState([]); // all users
+    const [userLists, setUserLists] = useState([]); // users with filter and pagination
+
     // Pagination state
     const [limit, setLimit] = useState(5);
-    const [page, setPage] = useState(1);
     const totalPage = Math.ceil(allUsers.length / limit);
+    const [page, setPage] = useState(1);
     const [rowStart, setRowStart] = useState(1);
     const [rowEnd, setRowEnd] = useState(0);
-
-    const [showUserDetail, setShowUserDetail] = useState(false);
-    const [user, setUser] = useState({});
-
-    // Checkbox state
-    const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('userChecked')) || []);
-    const [checkedAll, setCheckedAll] = useState(JSON.parse(localStorage.getItem('isCheckAllUser')) || false);
-
-    // Activate user state
-    const [activeId, setActiveId] = useState('');
-    const [isActived, setIsActived] = useState(false);
-
-    // Change user role state
-    const roleOptions = ['Moderator', 'Member'];
-    // const roleOptions = [];
-    const [roleId, setRoleId] = useState('');
-    const [userRole, setUserRole] = useState('');
-
-    const [searchValue, setSearchValue] = useState('');
-    const debouncedValue = useDebounce(searchValue, 300);
-
-    const [deleteId, setDeleteId] = useState('');
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState('');
 
     // Go to next page
     const handleNextPage = () => {
@@ -85,7 +62,21 @@ const User = () => {
         setRowEnd(rowEnd - +limit);
     };
 
-    // Get users from server
+    const [searchValue, setSearchValue] = useState('');
+    const debouncedValue = useDebounce(searchValue, 300);
+
+    // Set pagination state to default when have filter
+    useEffect(() => {
+        if (debouncedValue || limit) {
+            setPage(1);
+            setRowStart(1);
+            setRowEnd(0);
+        } else {
+            return;
+        }
+    }, [limit, debouncedValue]);
+
+    // Get user from server
     useEffect(() => {
         const fetchApi = async () => {
             setLoading(true);
@@ -100,33 +91,32 @@ const User = () => {
         };
 
         fetchApi();
-    }, [debouncedValue, page, limit, isSave]);
+    }, [limit, page, debouncedValue, isSave]);
 
-    // Set pagination state to default when have filter
+    // Checkbox state
+    const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('userChecked')) || []);
+    // Save checked list in localStorage
     useEffect(() => {
-        if (debouncedValue || limit) {
-            setPage(1);
-            setRowStart(1);
-            setRowEnd(0);
-        } else {
-            return;
-        }
-    }, [debouncedValue, limit]);
+        localStorage.setItem('userChecked', JSON.stringify(checked));
+    }, [checked]);
 
-    // Show user detail card when click
-    const handleShowUserDetail = async (id) => {
-        setShowUserDetail(true);
+    const [checkedAll, setCheckedAll] = useState(JSON.parse(localStorage.getItem('isCheckAllUser')) || false);
+    // Save checkedAll boolean in localStorage
+    useEffect(() => {
+        localStorage.setItem('isCheckAllUser', JSON.stringify(checkedAll));
+    }, [checkedAll]);
 
-        if (!id) return;
+    // Check all rows of users
+    useEffect(() => {
+        handleCheckAll(checkedAll, checked?.length, allUsers, setChecked);
+    }, [checkedAll, checked?.length, allUsers]);
 
-        const res = await userServices.getUserById(id);
-        if (res.code === 200) {
-            setUser(res.data);
-        } else {
-            return;
-        }
-    };
+    const [showUserDetail, setShowUserDetail] = useState(false);
+    const [user, setUser] = useState({});
 
+    // Activate user state
+    const [activeId, setActiveId] = useState('');
+    const [isActived, setIsActived] = useState(false);
     // Activate user function
     useEffect(() => {
         if (!activeId) return;
@@ -147,6 +137,11 @@ const User = () => {
         handleActivateUser();
     }, [activeId, isActived]);
 
+    // Change user role state
+    const roleOptions = ['Moderator', 'Member'];
+    // const roleOptions = [];
+    const [roleId, setRoleId] = useState('');
+    const [userRole, setUserRole] = useState('');
     // Change user role function
     useEffect(() => {
         if (!userRole) return;
@@ -163,23 +158,27 @@ const User = () => {
                 errorNotify(res, 1500);
             }
         };
+
         handleChangeRole();
     }, [roleId, userRole]);
 
-    // Save checked list in localStorage
-    useEffect(() => {
-        localStorage.setItem('userChecked', JSON.stringify(checked));
-    }, [checked]);
+    const [deleteId, setDeleteId] = useState('');
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState('');
 
-    // Save checkedAll boolean in localStorage
-    useEffect(() => {
-        localStorage.setItem('isCheckAllUser', JSON.stringify(checkedAll));
-    }, [checkedAll]);
+    // Show user detail card when click
+    const handleShowUserDetail = async (id) => {
+        setShowUserDetail(true);
 
-    // Check all rows of users
-    useEffect(() => {
-        handleCheckAll(checkedAll, checked?.length, allUsers, setChecked);
-    }, [checkedAll, checked?.length, allUsers]);
+        if (!id) return;
+
+        const res = await userServices.getUserById(id);
+        if (res.code === 200) {
+            setUser(res.data);
+        } else {
+            return;
+        }
+    };
 
     // Delete one row function
     const handleDelete = async (id) => {
