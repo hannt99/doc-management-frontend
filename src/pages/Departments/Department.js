@@ -23,16 +23,18 @@ const Department = () => {
     const [loading, setLoading] = useState(false);
     const [isSave, setIsSave] = useState(false);
 
+    const tableHeader = ['STT', 'Tên phòng ban', 'Trạng thái', 'Ghi chú', 'Thao tác'];
+
     // Department state
     const [allDepartments, setAllDepartments] = useState([]); // all departments
     const [departmentLists, setDepartmentLists] = useState([]); // departments with filter and pagination
 
     // Pagination state
+    const [limit, setLimit] = useState(5);
+    const totalPage = Math.ceil(allDepartments?.length / limit);
     const [page, setPage] = useState(1);
     const [rowStart, setRowStart] = useState(1);
     const [rowEnd, setRowEnd] = useState(0);
-    const [limit, setLimit] = useState(5);
-    const totalPage = Math.ceil(allDepartments?.length / limit);
 
     // Go to next page
     const handleNextPage = () => {
@@ -66,7 +68,7 @@ const Department = () => {
     useEffect(() => {
         const fetchApi = async () => {
             setLoading(true);
-            const res = await departmentServices.getAllDepartment(page, limit, debouncedValue);
+            const res = await departmentServices.getAllDepartment(limit, page, debouncedValue);
             if (res.code === 200) {
                 setAllDepartments(res.allDepartments); // all departments
                 setDepartmentLists(res.data); // departments with filter and pagination
@@ -77,9 +79,8 @@ const Department = () => {
         };
 
         fetchApi();
-    }, [page, limit, debouncedValue, isSave]);
+    }, [limit, page, debouncedValue, isSave]);
 
-    const tableHeader = ['STT', 'Tên phòng ban', 'Trạng thái', 'Ghi chú', 'Thao tác'];
     // Checkbox state
     const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('departmentChecked')) || []);
     // Save checked list in localStorage
@@ -93,7 +94,7 @@ const Department = () => {
         localStorage.setItem('isCheckAllDepartment', JSON.stringify(checkedAll));
     }, [checkedAll]);
 
-    // Check all rows of department
+    // Check all rows of departments
     useEffect(() => {
         handleCheckAll(checkedAll, checked?.length, allDepartments, setChecked);
     }, [checkedAll, checked?.length, allDepartments]);
@@ -193,7 +194,7 @@ const Department = () => {
                     </div>
                 </div>
             </div>
-            <div className="mb-[12px] md:mb-0 shadow-4Way border border-solid border-[#cccccc] bg-[#f7f7f7] p-[16px] flex flex-col md:flex-row items-center md:justify-between">
+            <div className="mb-[12px] md:mb-0 shadow-4Way border border-solid border-[#cccccc] bg-[#f7f7f7] p-[16px] flex flex-col items-center md:flex-row md:justify-between">
                 <h1 className="text-[1.8rem] md:text-[2.4rem] font-bold">Danh sách phòng ban</h1>
                 <div className="mt-3 md:mt-0 flex md:flex-col lg:flex-row items-center gap-5">
                     <button
@@ -284,7 +285,7 @@ const Department = () => {
                                                             />
                                                         </div>
                                                     </td>
-                                                    <td className="relative max-w-[200px] px-6 py-4 whitespace-nowrap group">
+                                                    <td className="relative whitespace-nowrap max-w-[200px] px-6 py-4 group">
                                                         <p title={dl?.note} className="w-[200px] truncate">
                                                             {dl?.note}
                                                         </p>
@@ -327,7 +328,6 @@ const Department = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="mx-5 py-3 flex items-center justify-between">
                     <div className="text-[1.5rem] flex items-center">
                         <select

@@ -6,7 +6,6 @@ import DefaultLayout from '~/layouts/DefaultLayout';
 import { Department, CreateDepartment } from '~/pages/Departments/index.js';
 import { User, CreateUser, RequestChange } from '~/pages/Users/index.js';
 import { DocumentIn, /*DocumentOut, DocumentDetail,*/ CreateDocument } from '~/pages/Documents/index.js';
-
 import * as authServices from '~/services/authServices';
 import { jwtDecode } from 'jwt-decode';
 import { io } from 'socket.io-client';
@@ -16,9 +15,46 @@ export const UserInfoContext = createContext();
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     const [activeFlag, setActiveFlag] = useState(JSON.parse(localStorage.getItem('activeFlag')) || false);
+    // Get isActived user from accessToken after sign in
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return;
+
+        const fetchApi = async () => {
+            const res = await authServices.getCurrUser();
+            // customLog(res);
+            setActiveFlag(res.isActived);
+        };
+
+        fetchApi();
+    }, [isLoggedIn]);
+    // Save isActived user in localStorage after sign in
+    useEffect(() => {
+        localStorage.setItem('activeFlag', JSON.stringify(activeFlag));
+    }, [isLoggedIn, activeFlag]);
+
     const [userRole, setUserRole] = useState(JSON.parse(localStorage.getItem('userRole')) || '');
     const [userId, setUserId] = useState(JSON.parse(localStorage.getItem('userId')) || '');
+    // Get userRole and userId from accessToken after sign in
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return;
+
+        const decodedToken = jwtDecode(accessToken);
+        setUserRole(decodedToken.role);
+        setUserId(decodedToken._id);
+    }, [isLoggedIn]);
+    // Save userRole in localStorage after sign in
+    useEffect(() => {
+        localStorage.setItem('userRole', JSON.stringify(userRole));
+    }, [isLoggedIn, userRole]);
+    // Save userId in localStorage after sign in
+    useEffect(() => {
+        localStorage.setItem('userId', JSON.stringify(userId));
+    }, [isLoggedIn, userId]);
+
     const [isChangeUserInfo, setIsChangeUserInfo] = useState(false);
 
     // Init socket.io server
@@ -34,45 +70,6 @@ function App() {
         //     console.log(users);
         // });
     }, [userId]);
-
-    // Get isActived user from accessToken after sign in
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) return;
-
-        const fetchApi = async () => {
-            const res = await authServices.getCurrUser();
-            // customLog(res);
-            setActiveFlag(res.isActived);
-        };
-
-        fetchApi();
-    }, [isLoggedIn]);
-
-    // Save isActived user in localStorage after sign in
-    useEffect(() => {
-        localStorage.setItem('activeFlag', JSON.stringify(activeFlag));
-    }, [isLoggedIn, activeFlag]);
-
-    // Get userRole and userId from accessToken after sign in
-    useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) return;
-
-        const decodedToken = jwtDecode(accessToken);
-        setUserRole(decodedToken.role);
-        setUserId(decodedToken._id);
-    }, [isLoggedIn]);
-
-    // Save userRole in localStorage after sign in
-    useEffect(() => {
-        localStorage.setItem('userRole', JSON.stringify(userRole));
-    }, [isLoggedIn, userRole]);
-
-    // Save userId in localStorage after sign in
-    useEffect(() => {
-        localStorage.setItem('userId', JSON.stringify(userId));
-    }, [isLoggedIn, userId]);
 
     // Check expire of refresh to logout
     useEffect(() => {

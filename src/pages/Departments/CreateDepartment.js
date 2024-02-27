@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import InputField from '~/components/InputField';
+import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
+import InputField from '~/components/InputField';
 import { fullNameValidator } from '~/utils/formValidation';
 import * as departmentServices from '~/services/departmentServices';
 import Loading from '~/components/Loading';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const CreateDepartment = ({ title }) => {
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
     // Input state
     const [fullName, setFullName] = useState('');
     const statusList = [
@@ -22,12 +25,7 @@ const CreateDepartment = ({ title }) => {
     const [isFullNameErr, setIsFullNameErr] = useState(false);
     const [fullNameErrMsg, setFullNameErrMsg] = useState({});
 
-    const [loading, setLoading] = useState(false);
-
-    const navigate = useNavigate();
-
     const { id } = useParams();
-
     // Get available department data when edit department
     useEffect(() => {
         if (!id) return;
@@ -46,8 +44,8 @@ const CreateDepartment = ({ title }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isfullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
-        if (!isfullNameValid) return;
+        const isFullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
+        if (!isFullNameValid) return;
 
         setLoading(true);
 

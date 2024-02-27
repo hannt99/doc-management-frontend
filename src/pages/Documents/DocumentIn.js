@@ -46,9 +46,9 @@ const DocumentIn = () => {
     const [documentLists, setDocumentLists] = useState([]); // documentIn with filter and pagination
 
     // Pagination state
-    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(5);
     const totalPage = Math.ceil(allDocuments?.length / limit);
+    const [page, setPage] = useState(1);
     const [rowStart, setRowStart] = useState(1);
     const [rowEnd, setRowEnd] = useState(0);
 

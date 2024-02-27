@@ -18,7 +18,7 @@ const DepartmentCard = (props) => {
                 <div className="flex items-center">
                     <input type="checkbox" checked={props.checkBox} onChange={props.handleCheckBox} />
                 </div>
-                <FontAwesomeIcon onClick={toggle} className="w-[16px] h-[16px] cursor-pointer" icon={faEllipsisH} />
+                <FontAwesomeIcon onClick={toggle} icon={faEllipsisH} className="w-[16px] h-[16px] cursor-pointer" />
                 <div
                     className={
                         !showAction ? 'hidden' : 'absolute top-[24px] right-0 w-[120px] h-fit shadow-4Way bg-white z-10'
@@ -26,14 +26,14 @@ const DepartmentCard = (props) => {
                 >
                     <ul>
                         <li onClick={() => setShowAction(false)} className="hover:bg-[#dddddd] cursor-pointer">
-                            <NavLink className="block p-[8px] text-left" to={`/departments/edit/${props.departmentId}`}>
+                            <NavLink to={`/departments/edit/${props.departmentId}`} className="block p-[8px] text-left">
                                 <FontAwesomeIcon icon={faPenToSquare} />
                                 <span className="ml-3">Sửa</span>
                             </NavLink>
                         </li>
                         <li
-                            className="w-full text-left p-[8px] hover:bg-[#dddddd] cursor-pointer"
                             onClick={props.handleDelete}
+                            className="w-full text-left p-[8px] hover:bg-[#dddddd] cursor-pointer"
                         >
                             <FontAwesomeIcon icon={faTrashCan} />
                             <span className="ml-3">Xóa</span>
@@ -41,11 +41,11 @@ const DepartmentCard = (props) => {
                     </ul>
                 </div>
             </div>
-            <div className="flex items-center mb-3">
+            <div className="mb-3 flex items-center ">
                 <p className="w-[120px] font-bold">STT:</p>
                 <p className="flex-1 truncate">{props.id}</p>
             </div>
-            <div className="mb-3 relative group flex items-center">
+            <div className="mb-3 relative flex items-center group ">
                 <p className="w-[120px] font-bold">Tên phòng ban:</p>
                 <p title={props.departmentName} className="flex-1 truncate">
                     {props.departmentName}
@@ -60,7 +60,7 @@ const DepartmentCard = (props) => {
                     setId={props.setActiveId}
                 />
             </div>
-            <div className=" mb-3 relative group flex items-center">
+            <div className="mb-3 relative group flex items-center">
                 <p className="w-[120px] font-bold">Ghi chú:</p>
                 <p title={props.note} className="flex-1 truncate">
                     {props.note}
