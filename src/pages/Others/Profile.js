@@ -1,33 +1,37 @@
 import { useState, useEffect, useContext, useRef } from 'react';
+import { UserInfoContext } from '~/App';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import * as authServices from '~/services/authServices';
-import * as userServices from '~/services/userServices';
-// import { useFetchTasks } from '~/hooks';
-import { UserInfoContext } from '~/App';
 import ProfileForm from '~/components/Form/ProfileForm';
 import FormData from 'form-data';
 import { formatVNDate } from '~/utils/formatDateTime';
+import * as authServices from '~/services/authServices';
+import * as userServices from '~/services/userServices';
+import { useFetchTasks } from '~/hooks';
+import ConfirmationDialog from '~/components/ConfirmationDialog';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 import customLog from '~/utils/customLog';
 
 const Profile = ({ socket }) => {
-    const [currUser, setCurrUser] = useState({});
-
-    const ref = useRef();
-
-    const { isChangeUserInfo, setIsChangeUserInfo } = useContext(UserInfoContext);
-
-    const [isReqChangeInfo, setIsReqChangeInfo] = useState(true);
-
-    const userRole = JSON.parse(localStorage.getItem('userRole'));
-
-    const [showProfileForm, setShowProfileForm] = useState(false);
-
-    // const allTasks = useFetchTasks();
-
+    const ref = useRef(null);
     const [isSave, setIsSave] = useState(false);
 
+    const allTasks = useFetchTasks();
+
+    // Get all complete tasks quantity
+    const getCompleteTaskQty = () => {
+        const qty = allTasks?.filter((item) => item?.progress === 'Hoàn thành');
+        return qty;
+    };
+
+    // Get complete percentage of all tasks
+    const getPercentProgress = () => {
+        return `${(getCompleteTaskQty().length / allTasks.length) * 100}%`;
+    };
+
+    const [currUser, setCurrUser] = useState({});
+    const [isReqChangeInfo, setIsReqChangeInfo] = useState(true);
+    const { isChangeUserInfo, setIsChangeUserInfo } = useContext(UserInfoContext);
     // Get current user data
     useEffect(() => {
         const fetchApi = async () => {
@@ -39,69 +43,71 @@ const Profile = ({ socket }) => {
         fetchApi();
     }, [isChangeUserInfo, isSave]);
 
+    const userRole = JSON.parse(localStorage.getItem('userRole'));
+
+    const [showProfileForm, setShowProfileForm] = useState(false);
+
     // Change avatar function
     const changeAvatar = async (e) => {
-        const data = new FormData();
         const file = e.target.files[0];
         if (!file) return;
 
+        const data = new FormData();
         data.append('myFile', file);
-        const res = await userServices.changeAvatar(data);
 
+        const res = await userServices.changeAvatar(data);
         if (res.code === 200) {
-            successNotify(res.message, 1500);
             setIsChangeUserInfo(!isChangeUserInfo);
+            successNotify(res.message, 1500);
         } else {
             errorNotify(res, 1500);
         }
     };
 
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState('');
     // Remove avatar function
     const handleRemoveAvatar = async () => {
-        const confirmMsg = 'Bạn có chắc muốn xóa ảnh đại diện không?';
-        if (!window.confirm(confirmMsg)) return;
+        setConfirmationMessage('Bạn có chắc muốn xóa ảnh đại diện không?');
+        setShowConfirmation(true);
+    };
+
+    const confirmDelete = async () => {
+        setShowConfirmation(false);
 
         const avatar = currUser?.avatar || '';
         const filename = avatar.substring(avatar.lastIndexOf('/') + 1); // "http://localhost:8888/static/1707808225005-ricardo.jpg" => "1707808225005-ricardo.jpg"
-        const res = await userServices.removeAvatar(filename);
 
+        const res = await userServices.removeAvatar(filename);
         if (res.code === 200) {
-            successNotify(res.message, 1500);
             ref.current.value = '';
             setIsChangeUserInfo(!isChangeUserInfo);
+            successNotify(res.message, 1500);
         } else {
             errorNotify(res, 1500);
         }
+        setConfirmationMessage('');
     };
 
-    // Get all complete tasks quantity
-    const getCompleteTaskQty = () => {
-        // const qty = allTasks?.filter((item) => item?.progress === 'Hoàn thành');
-        // return qty;
-
-        return [1, 2, 3];
-    };
-
-    // Get complete percentage of all tasks
-    const getPercentProgress = () => {
-        // return `${(getCompleteTaskQty().length / allTasks.length) * 100}%`;
-        return `80%`;
+    const cancelDelete = () => {
+        setShowConfirmation(false);
+        setConfirmationMessage('');
     };
 
     return (
         <>
-            <div className="h-full flex flex-col xl:flex-row gap-8">
+            <div className="h-full flex flex-col gap-8 xl:flex-row">
                 <div className="w-full xl:w-[320px] flex flex-col gap-8">
                     <div className="h-[320px] w-full xl:w-[320px] bg-white shadow-4Way flex">
                         <div className="m-auto">
                             <label className="label">
                                 <input
-                                    className="hidden"
-                                    disabled={currUser?.avatar === '' ? false : true}
                                     ref={ref}
                                     type="file"
                                     name="myFile"
                                     onChange={(e) => changeAvatar(e)}
+                                    disabled={currUser?.avatar === '' ? false : true}
+                                    className="hidden"
                                 />
                                 <figure className="relative w-[200px] h-[200px]">
                                     <img
@@ -111,7 +117,7 @@ const Profile = ({ socket }) => {
                                     />
                                     <figcaption className="absolute top-0 w-full h-full rounded-full bg-[#000] hover:bg-[#000] opacity-0 hover:opacity-40 cursor-pointer transition-all flex">
                                         <img
-                                            className="w-[50px] h-[50px] m-auto"
+                                            className="m-auto w-[50px] h-[50px]"
                                             src="https://raw.githubusercontent.com/ThiagoLuizNunes/angular-boilerplate/master/src/assets/imgs/camera-white.png"
                                             alt=""
                                         />
@@ -125,8 +131,8 @@ const Profile = ({ socket }) => {
                                     >
                                         <img
                                             src={currUser?.avatar}
-                                            className="absolute top-0 w-full h-full box-border border-2 border-solid border-[#ccc] rounded-full shadow-md hover:shadow-xl transition-all"
                                             alt="avatar"
+                                            className="absolute top-0 w-full h-full box-border border-2 border-solid border-[#ccc] rounded-full shadow-md hover:shadow-xl transition-all"
                                         />
                                         <div
                                             onClick={handleRemoveAvatar}
@@ -147,7 +153,7 @@ const Profile = ({ socket }) => {
                                 <div
                                     title={getPercentProgress() !== 'NaN%' ? getPercentProgress() : '100%'}
                                     style={{ width: getPercentProgress() }}
-                                    className={`rounded-full bg-blue-600 p-4 text-center text-blue-100 text-[1.4rem] font-medium leading-none `}
+                                    className={`rounded-full bg-blue-600 p-4 text-center text-blue-100 text-[1.4rem] font-medium leading-none`}
                                 ></div>
                             </div>
                             <div className="mt-9 flex justify-between">
@@ -155,13 +161,13 @@ const Profile = ({ socket }) => {
                                     <h3 className="rounded-xl bg-[#cccccc] px-2 text-white text-[1.4rem]">
                                         {userRole === 'Member' ? 'Được giao' : 'Đã tạo'}
                                     </h3>
-                                    <p className="font-semibold text-[#cccccc] text-center">{5}</p>
+                                    <p className="text-center font-semibold text-[#cccccc]">{5}</p>
                                 </div>
                                 <div>
                                     <h3 className="rounded-xl bg-green-600 px-2 text-white text-[1.4rem]">
                                         Hoàn thành
                                     </h3>
-                                    <p className="font-semibold text-green-600 text-center">
+                                    <p className="text-center font-semibold text-green-600">
                                         {getCompleteTaskQty().length}
                                     </p>
                                 </div>
@@ -176,7 +182,7 @@ const Profile = ({ socket }) => {
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="h-fit shadow-4Way px-10 bg-white">
+                    <div className="h-fit shadow-4Way bg-white px-10">
                         <p className="py-[12px] text-[1.8rem] flex">
                             <span className="mr-5 lg:mr-0 lg:w-[240px] font-bold">Họ và tên:</span>{' '}
                             <span className="flex-1">{currUser?.fullName}</span>
@@ -232,6 +238,14 @@ const Profile = ({ socket }) => {
                     setShowForm={setShowProfileForm}
                     setIsSave={() => setIsSave(!isSave)}
                     socket={socket}
+                />
+            )}
+            {showConfirmation && (
+                <ConfirmationDialog
+                    subject="Xoá ảnh đại diện"
+                    msg={confirmationMessage}
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
                 />
             )}
         </>

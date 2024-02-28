@@ -1,7 +1,7 @@
 import TimeAgo from 'javascript-time-ago';
 
 import vi from 'javascript-time-ago/locale/vi';
-import it from 'javascript-time-ago/locale/vi';
+import it from 'javascript-time-ago/locale/it';
 
 TimeAgo.addLocale(vi);
 TimeAgo.addLocale(it);

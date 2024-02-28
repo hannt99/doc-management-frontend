@@ -51,29 +51,29 @@ const UserCard = (props) => {
                 </div>
             </div>
             <div className="mb-3 flex items-center">
-                <p className="w-[120px] font-bold ">STT:</p>
+                <p className="w-[120px] font-bold">STT:</p>
                 <p className="flex-1 truncate">{props.id}</p>
             </div>
-            <div className="flex items-center mb-3">
-                <p className="font-bold w-[120px]">Họ và tên:</p>
+            <div className="mb-3 flex items-center">
+                <p className="w-[120px] font-bold">Họ và tên:</p>
                 <p title={props.fullName} className="flex-1 truncate">
                     {props.fullName}
                 </p>
             </div>
-            <div className=" mb-3 flex items-center">
-                <p className="font-bold w-[120px]">Email:</p>
+            <div className="mb-3 flex items-center">
+                <p className="w-[120px] font-bold">Email:</p>
                 <p title={props.email} className="flex-1 truncate">
                     {props.email}
                 </p>
             </div>
             <div className="mb-3 flex items-center">
-                <p className="font-bold w-[120px]">Số điện thoại:</p>
+                <p className="w-[120px] font-bold">Số điện thoại:</p>
                 <p title={props.phone} className="flex-1 truncate">
                     {props.phone}
                 </p>
             </div>
             <div className="mb-3 flex items-center">
-                <p className="font-bold w-[120px]">Phòng ban:</p>
+                <p className="w-[120px] font-bold">Phòng ban:</p>
                 <p title={props.department} className="flex-1 truncate">
                     {props.department}
                 </p>
