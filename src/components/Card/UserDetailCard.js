@@ -10,7 +10,7 @@ const UserDetail = (props) => {
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-[340px] md:w-[650px] h-fit rounded-md shadow-4Way bg-white p-[24px] md:p-[36px] animate-fadeIn flex items-center justify-center flex-col md:flex-row gap-10"
+                className="relative w-[340px] md:w-[650px] h-fit rounded-md shadow-4Way bg-white p-[24px] md:p-[36px] animate-fadeIn flex flex-col items-center justify-center gap-10 md:flex-row"
             >
                 <div
                     onClick={() => props.setShowUserDetail(false)}

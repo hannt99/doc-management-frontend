@@ -12,9 +12,9 @@ export const createUser = async (data = {}) => {
 };
 
 // Get all users function
-export const getAllUser = async (page, limit, search) => {
+export const getAllUser = async (limit, page, search) => {
     try {
-        const res = await httpRequest.get(`/user/get-all?page=${page}&limit=${limit}&search=${search}`);
+        const res = await httpRequest.get(`/user/get-all?limit=${limit}&page=${page}&search=${search}`);
         return res.data;
     } catch (error) {
         console.log(error);

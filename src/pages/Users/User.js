@@ -74,13 +74,13 @@ const User = () => {
         } else {
             return;
         }
-    }, [limit, debouncedValue]);
+    }, [debouncedValue, limit]);
 
     // Get user from server
     useEffect(() => {
         const fetchApi = async () => {
             setLoading(true);
-            const res = await userServices.getAllUser(page, limit, debouncedValue);
+            const res = await userServices.getAllUser(limit, page, debouncedValue);
             if (res.code === 200) {
                 setLoading(false);
                 setAllUsers(res.allUsers); // all users
@@ -91,7 +91,7 @@ const User = () => {
         };
 
         fetchApi();
-    }, [limit, page, debouncedValue, isSave]);
+    }, [debouncedValue, limit, page, isSave]);
 
     // Checkbox state
     const [checked, setChecked] = useState(JSON.parse(localStorage.getItem('userChecked')) || []);
@@ -111,8 +111,29 @@ const User = () => {
         handleCheckAll(checkedAll, checked?.length, allUsers, setChecked);
     }, [checkedAll, checked?.length, allUsers]);
 
-    const [showUserDetail, setShowUserDetail] = useState(false);
-    const [user, setUser] = useState({});
+    // Change user role state
+    const roleOptions = ['Moderator', 'Member'];
+    const [roleId, setRoleId] = useState('');
+    const [userRole, setUserRole] = useState('');
+    // Change user role function
+    useEffect(() => {
+        if (!userRole) return;
+
+        const handleChangeRole = async () => {
+            const data = {
+                role: userRole,
+            };
+            const res = await userServices.updateRole(roleId, data);
+            if (res.code === 200) {
+                successNotify(res.message, 1500);
+                setIsSave((isSave) => !isSave);
+            } else {
+                errorNotify(res, 1500);
+            }
+        };
+
+        handleChangeRole();
+    }, [roleId, userRole]);
 
     // Activate user state
     const [activeId, setActiveId] = useState('');
@@ -137,35 +158,8 @@ const User = () => {
         handleActivateUser();
     }, [activeId, isActived]);
 
-    // Change user role state
-    const roleOptions = ['Moderator', 'Member'];
-    // const roleOptions = [];
-    const [roleId, setRoleId] = useState('');
-    const [userRole, setUserRole] = useState('');
-    // Change user role function
-    useEffect(() => {
-        if (!userRole) return;
-
-        const handleChangeRole = async () => {
-            const data = {
-                role: userRole,
-            };
-            const res = await userServices.updateRole(roleId, data);
-            if (res.code === 200) {
-                successNotify(res.message, 1500);
-                setIsSave((isSave) => !isSave);
-            } else {
-                errorNotify(res, 1500);
-            }
-        };
-
-        handleChangeRole();
-    }, [roleId, userRole]);
-
-    const [deleteId, setDeleteId] = useState('');
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState('');
-
+    const [user, setUser] = useState({});
+    const [showUserDetail, setShowUserDetail] = useState(false);
     // Show user detail card when click
     const handleShowUserDetail = async (id) => {
         setShowUserDetail(true);
@@ -179,6 +173,10 @@ const User = () => {
             return;
         }
     };
+
+    const [deleteId, setDeleteId] = useState('');
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState('');
 
     // Delete one row function
     const handleDelete = async (id) => {
@@ -431,7 +429,9 @@ const User = () => {
                         <div
                             onClick={handlePrevPage}
                             className={
-                                page <= 1 ? 'md-page-btn hover:bg-[#dddddd] disabled' : 'md-page-btn hover:bg-[#dddddd]'
+                                page <= 1
+                                    ? 'md-page-btn hover:bg-[#dddddd] disabled cursor-not-allowed'
+                                    : 'md-page-btn hover:bg-[#dddddd]'
                             }
                         >
                             <FontAwesomeIcon icon={faAngleLeft} />
@@ -440,7 +440,7 @@ const User = () => {
                             onClick={handleNextPage}
                             className={
                                 page >= totalPage
-                                    ? 'md-page-btn hover:bg-[#dddddd] disabled'
+                                    ? 'md-page-btn hover:bg-[#dddddd] disabled cursor-not-allowed'
                                     : 'md-page-btn hover:bg-[#dddddd]'
                             }
                         >
@@ -528,7 +528,9 @@ const User = () => {
                     <div
                         onClick={handlePrevPage}
                         className={
-                            page <= 1 ? 'sm-page-btn hover:bg-[#bbbbbb] disabled' : 'sm-page-btn hover:bg-[#bbbbbb]'
+                            page <= 1
+                                ? 'sm-page-btn hover:bg-[#bbbbbb] disabled cursor-not-allowed'
+                                : 'sm-page-btn hover:bg-[#bbbbbb]'
                         }
                     >
                         {'< Trước'}
@@ -537,7 +539,7 @@ const User = () => {
                         onClick={handleNextPage}
                         className={
                             page >= totalPage
-                                ? 'sm-page-btn hover:bg-[#bbbbbb] disabled'
+                                ? 'sm-page-btn hover:bg-[#bbbbbb] disabled cursor-not-allowed'
                                 : 'sm-page-btn hover:bg-[#bbbbbb]'
                         }
                     >

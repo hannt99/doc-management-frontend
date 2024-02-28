@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons';
-
 import InputField from '~/components/InputField';
 import DropList from '~/components/DropList';
 import { fullNameValidator, emailValidator, dropListValidator } from '~/utils/formValidation';
-
 import { useFetchDepartments } from '~/hooks';
 import * as userServices from '~/services/userServices';
-
 import Loading from '~/components/Loading';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
@@ -59,11 +56,11 @@ const CreateUser = ({ title }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isfullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
+        const isFullNameValid = fullNameValidator(fullName, setIsFullNameErr, setFullNameErrMsg);
         const isEmailValid = emailValidator(email, setIsEmailErr, setEmailErrMsg);
         const isDepartmentValid = dropListValidator(department, setIsDepartmentErr, setDepartmentErrMsg);
 
-        if (!isEmailValid || !isfullNameValid || !isDepartmentValid) return;
+        if (!isFullNameValid || !isEmailValid || !isDepartmentValid) return;
 
         setLoading(true);
 

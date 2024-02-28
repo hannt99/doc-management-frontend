@@ -12,10 +12,10 @@ export const createTask = async (data = {}) => {
 };
 
 // Get all tasks function
-export const getAllTask = async (page, limit, taskName, createdAt, dueDate, type, status, level, progress) => {
+export const getAllTask = async (limit, page, taskName, createdAt, dueDate, type, status, level, progress) => {
     try {
         const res = await httpRequest.get(
-            `/task/get-all?page=${page}&limit=${limit}&taskName=${taskName}&createdAt=${createdAt}&dueDate=${dueDate}&type=${type}&status=${status}&level=${level}&progress=${progress}`,
+            `/task/get-all?limit=${limit}&page=${page}&taskName=${taskName}&createdAt=${createdAt}&dueDate=${dueDate}&type=${type}&status=${status}&level=${level}&progress=${progress}`,
         );
         return res.data;
     } catch (error) {

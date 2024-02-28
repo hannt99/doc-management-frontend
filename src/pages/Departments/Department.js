@@ -174,6 +174,7 @@ const Department = () => {
     const cancelDelete = () => {
         setDeleteId('');
         setShowConfirmation(false);
+        setConfirmationMessage('');
     };
 
     return (
@@ -349,7 +350,9 @@ const Department = () => {
                         <div
                             onClick={handlePrevPage}
                             className={
-                                page <= 1 ? 'md-page-btn hover:bg-[#dddddd] disabled' : 'md-page-btn hover:bg-[#dddddd]'
+                                page <= 1
+                                    ? 'md-page-btn hover:bg-[#dddddd] disabled cursor-not-allowed'
+                                    : 'md-page-btn hover:bg-[#dddddd]'
                             }
                         >
                             <FontAwesomeIcon icon={faAngleLeft} />
@@ -358,7 +361,7 @@ const Department = () => {
                             onClick={handleNextPage}
                             className={
                                 page >= totalPage
-                                    ? 'md-page-btn hover:bg-[#dddddd] disabled'
+                                    ? 'md-page-btn hover:bg-[#dddddd] disabled cursor-not-allowed'
                                     : 'md-page-btn hover:bg-[#dddddd]'
                             }
                         >
@@ -428,7 +431,9 @@ const Department = () => {
                     <div
                         onClick={handlePrevPage}
                         className={
-                            page <= 1 ? 'disabled sm-page-btn hover:bg-[#bbbbbb]' : 'sm-page-btn hover:bg-[#bbbbbb]'
+                            page <= 1
+                                ? 'sm-page-btn hover:bg-[#bbbbbb] disabled cursor-not-allowed'
+                                : 'sm-page-btn hover:bg-[#bbbbbb]'
                         }
                     >
                         {'< Trước'}
@@ -437,8 +442,8 @@ const Department = () => {
                         onClick={handleNextPage}
                         className={
                             page >= totalPage
-                                ? 'disabled sm-page-btn hover:bg-[#bbbbbb]'
-                                : '         sm-page-btn hover:bg-[#bbbbbb]'
+                                ? 'sm-page-btn hover:bg-[#bbbbbb] disabled cursor-not-allowed'
+                                : 'sm-page-btn hover:bg-[#bbbbbb]'
                         }
                     >
                         {'Sau >'}
