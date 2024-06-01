@@ -1,5 +1,5 @@
 {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "cSpell.words": ["Actived", "tailwindcss"]
+    "cSpell.words": ["fontawesome", "fortawesome", "Parens", "tailwindcss", "toastify"]
 }
