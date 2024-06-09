@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 import InputField from '~/components/InputField';
 import { emailValidator, passwordValidator } from '~/utils/formValidation';
@@ -66,7 +66,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                     <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] mb-16 font-medium">Đăng nhập</h1>
+                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] font-medium mb-16">Đăng nhập</h1>
                     <form id="sign-in" autoComplete="on">
                         <InputField
                             placeholder="Email"
