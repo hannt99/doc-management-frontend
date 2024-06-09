@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+
 import InputField from '~/components/InputField';
 import { emailValidator } from '~/utils/formValidation';
+
 import Loading from '~/components/Loading';
+
 import * as authServices from '~/services/authServices';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
@@ -52,7 +56,7 @@ const ForgotPassword = () => {
         <>
             <div className="w-screen h-screen bg-[#ebedef] flex items-center justify-center">
                 <div className="w-[330px] md:w-[450px] h-fit rounded-md shadow-4Way bg-white p-[36px]">
-                    <h1 className="text-center text-[4.6rem] font-semibold italic text-[#9fa9ae]">
+                    <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
                     <h1 className="text-center text-[#9fa9ae] text-[2.0rem] font-medium mb-16">Quên mật khẩu</h1>
@@ -66,7 +70,7 @@ const ForgotPassword = () => {
                             onBlur={() => emailValidator(email, setIsEmailErr, setEmailErrMsg)}
                             className={isEmailErr ? 'invalid' : 'default'}
                         />
-                        <p className="text-[1.3rem] text-red-600">{emailErrMsg.email}</p>
+                        <p className="text-red-600 text-[1.3rem]">{emailErrMsg.email}</p>
                         <div className="text-right mt-7">
                             <NavLink className="hover:underline" to="/sign-in">
                                 {'<<'} Trở về đăng nhập
@@ -74,7 +78,7 @@ const ForgotPassword = () => {
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full rounded-md mt-10 bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
+                            className="w-full mt-10 rounded-md bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
                         >
                             Gửi
                         </button>

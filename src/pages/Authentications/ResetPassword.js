@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import InputField from '~/components/InputField';
 import { passwordValidator } from '~/utils/formValidation';
+
 import Loading from '~/components/Loading';
+
 import * as authServices from '~/services/authServices';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
@@ -95,11 +99,11 @@ const ResetPassword = () => {
                                 }
                                 className={isConfirmPasswordErr ? 'invalid' : 'default'}
                             />
-                            <p className="text-[1.3rem] text-red-600">{confirmPasswordErrMsg.confirmPassword}</p>
+                            <p className="text-red-600 text-[1.3rem]">{confirmPasswordErrMsg.confirmPassword}</p>
                         </div>
                         <button
                             onClick={handleSubmit}
-                            className="w-full rounded-md mt-12 bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
+                            className="w-full mt-12 rounded-md bg-[#321fdb] hover:bg-[#1b2e4b] px-[16px] py-[8px] text-[white] transition-all duration-[1s]"
                         >
                             Đặt lại
                         </button>
