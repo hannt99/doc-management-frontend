@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { /*useNavigate,*/ NavLink } from 'react-router-dom';
 
 import InputField from '~/components/InputField';
 import { emailValidator } from '~/utils/formValidation';
@@ -8,8 +8,6 @@ import Loading from '~/components/Loading';
 
 import * as authServices from '~/services/authServices';
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const ForgotPassword = () => {
@@ -22,7 +20,7 @@ const ForgotPassword = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     // Send an email containing a link to reset the password
     const handleSubmit = async (e) => {
@@ -59,7 +57,7 @@ const ForgotPassword = () => {
                     <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] font-medium mb-16">Quên mật khẩu</h1>
+                    <h1 className="mb-16 text-center text-[#9fa9ae] text-[2.0rem] font-medium">Quên mật khẩu</h1>
                     <form autoComplete="on">
                         <InputField
                             placeholder="Email"
@@ -71,7 +69,7 @@ const ForgotPassword = () => {
                             className={isEmailErr ? 'invalid' : 'default'}
                         />
                         <p className="text-red-600 text-[1.3rem]">{emailErrMsg.email}</p>
-                        <div className="text-right mt-7">
+                        <div className="mt-7 text-right">
                             <NavLink className="hover:underline" to="/sign-in">
                                 {'<<'} Trở về đăng nhập
                             </NavLink>
@@ -90,7 +88,6 @@ const ForgotPassword = () => {
                     <Loading />
                 </div>
             )}
-            <ToastContainer />
         </>
     );
 };
