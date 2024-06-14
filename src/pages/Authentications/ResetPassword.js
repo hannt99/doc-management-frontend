@@ -8,8 +8,6 @@ import Loading from '~/components/Loading';
 
 import * as authServices from '~/services/authServices';
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { successNotify, errorNotify } from '~/components/ToastMessage';
 
 const ResetPassword = () => {
@@ -70,7 +68,7 @@ const ResetPassword = () => {
                     <h1 className="text-center text-[#9fa9ae] text-[4.6rem] font-semibold italic">
                         QLVB <span className="text-[2.4rem]">v1.0</span>
                     </h1>
-                    <h1 className="text-center text-[#9fa9ae] text-[2.0rem] font-medium mb-16">Đặt lại mật khẩu</h1>
+                    <h1 className="mb-16 text-center text-[#9fa9ae] text-[2.0rem] font-medium">Đặt lại mật khẩu</h1>
                     <form>
                         <InputField
                             placeholder="Mật khẩu mới"
@@ -115,7 +113,6 @@ const ResetPassword = () => {
                     <Loading />
                 </div>
             )}
-            <ToastContainer />
         </>
     );
 };

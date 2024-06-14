@@ -9,6 +9,8 @@ import { DocumentIn, /*DocumentOut, DocumentDetail,*/ CreateDocument } from '~/p
 import * as authServices from '~/services/authServices';
 import { jwtDecode } from 'jwt-decode';
 import { io } from 'socket.io-client';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import customLog from './utils/customLog';
 
 export const UserInfoContext = createContext();
@@ -266,8 +268,10 @@ function App() {
                     </Route>
                     <Route path="/" element={<Navigate to="/sign-in" />} />
                     <Route path="*" element={<Page404 />} />
+                    
                 </Routes>
             </Router>
+            <ToastContainer />
         </UserInfoContext.Provider>
     );
 }

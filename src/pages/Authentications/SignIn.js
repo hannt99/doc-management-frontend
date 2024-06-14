@@ -9,9 +9,7 @@ import Loading from '~/components/Loading';
 import * as authServices from '~/services/authServices';
 import { jwtDecode } from 'jwt-decode';
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { successNotify, errorNotify } from '~/components/ToastMessage';
+import { /*successNotify,*/ errorNotify } from '~/components/ToastMessage';
 
 const SignIn = ({ setIsLoggedIn }) => {
     // Input state
@@ -48,10 +46,10 @@ const SignIn = ({ setIsLoggedIn }) => {
         if (res.code === 200) {
             localStorage.setItem('accessToken', res.accessToken);
             localStorage.setItem('refreshToken', res.refreshToken);
-            const decodedToken = jwtDecode(res.accessToken);
-            setLoading(false);
-            // successNotify(res.message);
+            const decodedToken = jwtDecode(res.accessToken);           
             setIsLoggedIn(true);
+			setLoading(false);
+			// successNotify(res.message);
             navigate(decodedToken.role === 'Member' ? '/documents/documents-in' : '/dashboard');
         } else {
             setLoading(false);
@@ -89,9 +87,9 @@ const SignIn = ({ setIsLoggedIn }) => {
                                 }
                                 className={isPasswordErr ? 'invalid' : 'default'}
                             />
-                            <p className="text-[1.3rem] text-red-600">{passwordErrMsg.password}</p>
+                            <p className="text-red-600 text-[1.3rem]">{passwordErrMsg.password}</p>
                         </div>
-                        <div className="text-right mt-7">
+                        <div className="mt-7 text-right">
                             <NavLink className="hover:underline" to="/forgot-password">
                                 Quên mật khẩu?
                             </NavLink>
@@ -110,7 +108,7 @@ const SignIn = ({ setIsLoggedIn }) => {
                     <Loading />
                 </div>
             )}
-            <ToastContainer />
+            
         </>
     );
 };
