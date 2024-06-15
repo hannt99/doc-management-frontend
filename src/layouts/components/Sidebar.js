@@ -35,10 +35,10 @@ const Sidebar = () => {
 
         const decodedToken = jwtDecode(token);
         setUserRole(decodedToken.role);
-        return () => {
-            // customLog(localStorage.getItem('userRole'));
-            // customLog(userRole === '');
-        };
+        // return () => {
+        //     customLog(localStorage.getItem('userRole'));
+        //     customLog(userRole === '');
+        // };
     }, []);
 
     return (
