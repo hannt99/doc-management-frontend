@@ -62,7 +62,7 @@ function App() {
     // Init socket.io server
     const socket = useRef();
     useEffect(() => {
-        socket.current = io('http://localhost:8888', { transports: ['websocket'] });
+        socket.current = io(PROSERVER, { transports: ['websocket'] });
     }, []);
 
     // Send info to socket.io server
